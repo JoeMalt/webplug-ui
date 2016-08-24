@@ -1,5 +1,11 @@
 from flask import *
 from functools import wraps
+from passlib.apps import custom_app_context as pwd_context
+
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+
+from .orm_template import db_user
 
 app = Flask(__name__)
 
@@ -59,20 +65,23 @@ def toggle():
     return redirect(url_for('index'))
 
 
-# These functions should probably go elsewhere
+def get_db_session():
+    engine = create_engine('sqlite:///web/webplug.db')
+    Session = sessionmaker(bind=engine)
+    db_session = Session()
 
-def is_logged_():
-    if 'username' not in session.keys() or session['username'] == None:
-        # User is not logged in
-        flash("You must log in to access this page")
-        redirect(url_for('login'))
-        return False
-    return True
+    return db_session
 
 
 def verify_credentials(username, password):
-    return True
+    # We need to guarantee closure of the database.
+    db_session = get_db_session()
+    try:
+        user = db_session.query(db_user).filter(db_user.username == username).first()
+    finally:
+        db_session.close()
 
-
-if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=8080)
+    if pwd_context.verify(password, user.pwd_hash):
+        return True
+    else:
+        return False
