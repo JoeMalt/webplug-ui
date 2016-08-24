@@ -1,11 +1,10 @@
 table DEVICES
 	id INT primary_key auto_increment
 	host_id INT foreign_key
-	plug INT
+	plug_id INT
 	name TEXT
 	status INT (0 for off, 1 for on, -1 for unknown)
-	
-	
+
 table HOSTS
 	id INT primary_key auto_increment
 	ip_address TEXT
@@ -14,4 +13,4 @@ table HOSTS
 table USERS
 	id INT primary_key auto_increment
 	username TEXT
-	password TEXT (hashed with scrypt or similar)
+	pwd_hash TEXT (hashed with scrypt or similar)
