@@ -243,15 +243,19 @@ def toggle():
                                                                 db_plugSocket.plug_id == plug).join(db_host).first()
         if query.db_plugSocket.status == 0:
             # Turn it on
-            msg_worker('N', host, plug)
+            if msg_worker('N', host, plug):
+                flash('Toggled plug ' + plug + ' on host ' + host + '.')
+            else:
+                flash('Host {} was not connectable.'.format(host))
         else:
             # If anything else, just turn it off to be safe
-            msg_worker('F', host, plug)
+            if msg_worker('F', host, plug):
+                flash('Toggled plug ' + plug + ' on host ' + host + '.')
+            else:
+                flash('Host {} was not connectable.'.format(host))
     finally:
         db_session.close
 
-    # Now tell the user that we've done it
-    flash('Toggled plug ' + plug + ' on host ' + host + '.')
     return redirect(url_for('index'))
 
 

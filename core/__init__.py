@@ -24,13 +24,10 @@ def msg_worker(command, host_id, plug_id):
         ip_address = query.db_host.ip_address
         port = query.db_host.port
 
-        print('Creating socket.')
-        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         print('Connecting to worker - {} {}'.format(ip_address, port))
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.connect((ip_address, port))
-        print('Sending message.')
         s.send(message)
-        print('Waiting for message.')
         returned = s.recv(1)
         print(returned)
         print('Closing socket.')
@@ -44,6 +41,13 @@ def msg_worker(command, host_id, plug_id):
                 query.db_plugSocket.status = 0
 
         db_session.commit()
+        return True
+    except ConnectionRefusedError:
+        print('Connection Refused')
+        return False
+    except TimeoutError:
+        print('Host is offline.')
+        return False
     finally:
         db_session.close
 
