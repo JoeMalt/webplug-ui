@@ -9,11 +9,12 @@ def msg_worker(command, host_id, plug_id):
 
     db_session = get_db_session()
     try:
-        query = db_session.query(db_plugSocket, db_host).join(db_host).first()
+        query = db_session.query(db_plugSocket, db_host).filter(db_plugSocket.host_id == host_id, db_plugSocket.plug_id == plug_id).join(db_host).first()
         ip_address = query.db_host.ip_address
         port = query.db_host.port
     finally:
         db_session.close
+
     print('Creating socket.')
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     print('Connecting to worker - {} {}'.format(ip_address, port))
