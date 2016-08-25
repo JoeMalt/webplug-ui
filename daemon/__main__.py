@@ -1,6 +1,5 @@
 import logging
 from logging.handlers import SysLogHandler
-import time
 
 import select
 
@@ -15,7 +14,7 @@ class webplug_daemon(Service):
         self.logger.setLevel(logging.INFO)
 
     def run(self):
-        """
+        import socket
         # Create the server socket for receiving commands from the web interface.
         s = socket.socket(
             socket.AF_INET, socket.SOCK_STREAM)
@@ -25,6 +24,7 @@ class webplug_daemon(Service):
 
         try:
             while not self.got_sigterm():
+                returned = None
                 ready_to_read, ready_to_write, in_error = \
                     select.select(
                         [s],
@@ -33,21 +33,24 @@ class webplug_daemon(Service):
                         10)
 
                 for socket in ready_to_read:
-                    returned = socket.recv(1024)
-
-                self.logger.warn(returned)
+                    conn, addr = socket.accept()
+                    returned = conn.recv(1024)
+                    self.logger.warn(returned)
+                    conn.send(bytes("Confirmed", 'UTF-8'))
+                    conn.close()
 
                 self.logger.info("I'm working...")
-                time.sleep(5)
         finally:
             s.close()
-        """
-        while not self.got_sigterm():
-            self.logger.info("I'm working...")
-            time.sleep(5)
+
+            # while not self.got_sigterm():
+            #    self.logger.info("I'm working...")
+            #    time.sleep(5)
+
 
 if __name__ == '__main__':
     import sys
+
     if len(sys.argv) != 2:
         sys.exit('Syntax: %s COMMAND' % sys.argv[0])
 
