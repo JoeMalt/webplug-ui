@@ -71,6 +71,24 @@ def login():
             flash("Incorrect username or password")
             return redirect(url_for('login'))
 
+@app.route("/add_device", methods=['POST', 'GET'])
+@login_required
+@admin_required
+def add_device():
+    if request.method == 'GET':
+        db_session = get_db_session()
+        try:
+            hosts = db_session.query(db_host).all()
+            plug_sockets = db_session.query(db_plugSocket).all()
+        finally:
+            db_session.close()
+        
+        return render_template('add_device.html', hosts = hosts, plug_sockets = plug_sockets)
+    elif request.method == 'POST':
+        #TODO database
+        flash("Device added")
+        return redirect(url_for('index'))
+
 
 @app.route("/admin")
 @login_required
@@ -123,6 +141,65 @@ def admin_change_password(user_id):
     return render_template("admin_change_password.html")
 
 
+@app.route("/admin_change_password", methods=['POST'])
+@login_required
+@admin_required
+def admin_change_password_process():
+    if request.form['password'] == request.form['password2']:
+        user_id = session['tmp_user_id_to_change']
+        password = request.form['password']
+
+        db_session = get_db_session()
+        try:
+            pwd_hash = pwd_context.encrypt(password)
+
+            user = db_session.query(db_user).filter(db_user.id == user_id).first()
+            user.pwd_hash = pwd_hash
+            db_session.commit()
+        finally:
+            session['tmp_user_id_to_change'] = None
+            db_session.close()
+
+        # No need to check current password as this is an admin feature
+        flash("Password changed")
+        return redirect(url_for('admin'))
+    else:
+        flash("Passwords do not match")
+        return redirect(url_for('admin_change_password'))
+
+
+
+@app.route("/rename_device/<plug_socket_id>", methods=['GET']) #This is the primary key from the plug_sockets table, plug_sockets.id It is *not* the plug_id because this is not a PK
+@login_required
+@admin_required
+def rename_device(plug_socket_id):
+    session['tmp_plug_socket_id_to_change'] = plug_socket_id  # this is a bit hacky but by far the easiest way
+    return render_template("rename_device.html")
+
+
+@app.route("/rename_device", methods=['POST'])
+@login_required
+@admin_required
+def rename_device_process():
+
+    plug_socket_id = session['tmp_plug_socket_id_to_change']
+    name = request.form['name']
+
+    db_session = get_db_session()
+    try:
+
+        plug_socket = db_session.query(db_plugSocket).filter(db_plugSocket.id == plug_socket_id).first()
+        plug_socket.name = name
+        db_session.commit()
+    finally:
+        session['tmp_plug_socket_id_to_change'] = None
+        db_session.close()
+
+    flash("Name updated")
+    return redirect(url_for('index'))
+  
+        
+        
 @app.route("/delete_user", methods=['POST'])
 @login_required
 @admin_required
@@ -163,31 +240,7 @@ def toggle_admin():
     return redirect(url_for('admin'))
 
 
-@app.route("/admin_change_password", methods=['POST'])
-@login_required
-@admin_required
-def admin_change_password_process():
-    if request.form['password'] == request.form['password2']:
-        user_id = session['tmp_user_id_to_change']
-        password = request.form['password']
 
-        db_session = get_db_session()
-        try:
-            pwd_hash = pwd_context.encrypt(password)
-
-            user = db_session.query(db_user).filter(db_user.id == user_id).first()
-            user.pwd_hash = pwd_hash
-            db_session.commit()
-        finally:
-            session['tmp_user_id_to_change'] = None
-            db_session.close()
-
-        # No need to check current password as this is an admin feature
-        flash("Password changed")
-        return redirect(url_for('admin'))
-    else:
-        flash("Passwords do not match")
-        return redirect(url_for('admin_change_password', user_id=1))
 
 
 @app.route("/logout")

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}"/>
+		<title>WEBplug</title>
+	</head>
+	<body>
+		
+		{% with messages = get_flashed_messages() %}
+			{% if messages %}
+				<ul class=flashes>
+					{% for message in messages %}
+						<li>{{ message }}</li>
+					{% endfor %}
+				</ul>
+			{% endif %}
+		{% endwith %}
+		
+		<h1>Rename device</h1>
+		<p><a href="{{ url_for('index') }}">Back to Devices</a></p>
+		<table>
+			<form method="post" action="/rename_device">
+				<tr><td><label>New name: <input type="text" name="name" /></label></td></tr>
+				<tr><td><input type="submit" value="Update name" /></td></tr>
+			</form>
+		</table>
+	</body>
+</html>
+
+
+
+

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}"/>
+		<title>WEBplug</title>
+	</head>
+	<body>
+		
+		{% with messages = get_flashed_messages() %}
+			{% if messages %}
+				<ul class=flashes>
+					{% for message in messages %}
+						<li>{{ message }}</li>
+					{% endfor %}
+				</ul>
+			{% endif %}
+		{% endwith %}
+		
+		<h1>Add device</h1>
+		<p><a href="{{ url_for('admin') }}">Back to Users</a></p>
+		<table>
+			<form method="post" action="/add_user">
+				<tr><td><label>Name<input type="text" name="name" /></label></td></tr>
+				<tr><td><label>Choose a socket:
+                <select name="host_and_socket">
+                    {% for host in hosts %}
+                    {% endfor %}
+                </select>
+                </label></td></tr>
+				<tr><td><input type="submit" value="Add device" /></td></tr>
+			</form>
+		</table>
+	</body>
+</html>
+
+
+
+

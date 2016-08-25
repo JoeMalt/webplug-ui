@@ -22,7 +22,10 @@
 			<tr><th>Name</th><th>Plug</th><th>Status</th></tr>
             {% for plug_socket in query %}
 			<tr>
-                <td>{{ plug_socket.name }}</td>
+                <td>
+                    <p>{%if plug_socket.name != None %}{{ plug_socket.name }}{% else %} <i>Unnamed device</i> {% endif %}</p>
+                    <p><a href="/rename_device/{{ plug_socket.id }}"><small>{%if plug_socket.name != None %}Change name{% else %}Set name{% endif %}</small></a></p>
+                </td>
                 <td>{{ plug_socket.id }}</td>
                 <td>
                     <p>
