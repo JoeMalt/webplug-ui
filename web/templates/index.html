@@ -26,7 +26,7 @@
                     <p>{%if plug_socket.name != None %}{{ plug_socket.name }}{% else %} <i>Unnamed device</i> {% endif %}</p>
                     <p><a href="/rename_device/{{ plug_socket.id }}"><small>{%if plug_socket.name != None %}Change name{% else %}Set name{% endif %}</small></a></p>
                 </td>
-                <td>{{ plug_socket.id }}</td>
+                <td>{{ plug_socket.plug_id }}</td>
                 <td>
                     <p>
 
@@ -41,7 +41,7 @@
                     </p>
                     <form method="post" action="/toggle">
                         <input type="hidden" name="host" value="{{ plug_socket.host_id }}" />
-                        <input type="hidden" name="plug" value="{{ plug_socket.id }}" />
+                        <input type="hidden" name="plug" value="{{ plug_socket.plug_id }}" />
                         <input type="submit" value="Toggle"/>
                     </form>
 			    </td>

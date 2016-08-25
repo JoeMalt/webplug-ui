@@ -3,8 +3,8 @@ from functools import wraps
 from flask import *
 from passlib.apps import custom_app_context as pwd_context
 
-from core.orm_template import db_user, db_plugSocket
-from core import get_db_session
+from core.orm_template import db_user, db_host, db_plugSocket
+from core import get_db_session, msg_worker
 
 app = Flask(__name__)
 
@@ -71,25 +71,6 @@ def login():
             flash("Incorrect username or password")
             return redirect(url_for('login'))
 
-@app.route("/add_device", methods=['POST', 'GET'])
-@login_required
-@admin_required
-def add_device():
-    if request.method == 'GET':
-        db_session = get_db_session()
-        try:
-            hosts = db_session.query(db_host).all()
-            plug_sockets = db_session.query(db_plugSocket).all()
-        finally:
-            db_session.close()
-        
-        return render_template('add_device.html', hosts = hosts, plug_sockets = plug_sockets)
-    elif request.method == 'POST':
-        #TODO database
-        flash("Device added")
-        return redirect(url_for('index'))
-
-
 @app.route("/admin")
 @login_required
 @admin_required
@@ -101,7 +82,7 @@ def admin():
     finally:
         db_session.close()
 
-    return render_template("admin.html", users=users)  # TODO database: populate the users list from the DB
+    return render_template("admin.html", users=users)
 
 
 @app.route("/add_user", methods=['POST', 'GET'])
@@ -187,7 +168,6 @@ def rename_device_process():
 
     db_session = get_db_session()
     try:
-
         plug_socket = db_session.query(db_plugSocket).filter(db_plugSocket.id == plug_socket_id).first()
         plug_socket.name = name
         db_session.commit()
@@ -257,6 +237,18 @@ def toggle():
     plug = request.form['plug']
 
     # Connect to the daemon here
+    db_session = get_db_session()
+    try:
+        query = db_session.query(db_plugSocket, db_host).filter(db_plugSocket.host_id == host,
+                                                                db_plugSocket.plug_id == plug).join(db_host).first()
+        if query.db_plugSocket.status == 0:
+            # Turn it on
+            msg_worker('N', host, plug)
+        else:
+            # If anything else, just turn it off to be safe
+            msg_worker('F', host, plug)
+    finally:
+        db_session.close
 
     # Now tell the user that we've done it
     flash('Toggled plug ' + plug + ' on host ' + host + '.')

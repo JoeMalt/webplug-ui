@@ -23,20 +23,30 @@ def msg_worker(command, host_id, plug_id):
                                                                 db_plugSocket.plug_id == plug_id).join(db_host).first()
         ip_address = query.db_host.ip_address
         port = query.db_host.port
+
+        print('Creating socket.')
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        print('Connecting to worker - {} {}'.format(ip_address, port))
+        s.connect((ip_address, port))
+        print('Sending message.')
+        s.send(message)
+        print('Waiting for message.')
+        returned = s.recv(1)
+        print(returned)
+        print('Closing socket.')
+        s.close()
+
+        # If a success code was returned:
+        if returned == b'0':
+            if command == 'N':
+                query.db_plugSocket.status = 1
+            elif command == 'F':
+                query.db_plugSocket.status = 0
+
+        db_session.commit()
     finally:
         db_session.close
 
-    print('Creating socket.')
-    s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    print('Connecting to worker - {} {}'.format(ip_address, port))
-    s.connect((ip_address, port))
-    print('Sending message.')
-    s.send(message)
-    print('Waiting for message.')
-    returned = s.recv(1)
-    print(returned)
-    print('Closing socket.')
-    s.close()
 
 
 def msg_daemon(command):
