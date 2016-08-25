@@ -79,6 +79,22 @@ def admin():
     return render_template("admin.html")
 
 
+@app.route("/add_user", methods=['POST', 'GET'])
+@login_required
+@admin_required
+def add_user():
+    if request.method == 'GET':
+        return render_template('add_user.html')
+    elif request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        is_admin = request.form['is_admin']
+        
+        #TODO database: insert this data into database, including password hashing 
+        
+        flash('User added')
+        return redirect(url_for('admin'))
+
 @app.route("/admin_change_password/<user_id>", methods=['GET'])
 @login_required
 @admin_required
@@ -91,7 +107,7 @@ def admin_change_password(user_id):
 @admin_required
 def delete_user():
     user_id = request.form['user_id']
-    # database: delete user with user_id
+    # TODO database: delete user with user_id
     flash("User deleted")
     return redirect(url_for('admin'))
 
@@ -101,7 +117,7 @@ def delete_user():
 @admin_required
 def toggle_admin():
     user_id = request.form['user_id']
-    # database: toggle is_admin for user with user_id
+    # TODO database: toggle is_admin for user with user_id
     flash("Admin status toggled")
     return redirect(url_for('admin'))
 
@@ -111,7 +127,8 @@ def toggle_admin():
 @admin_required
 def admin_change_password_process():
     if request.form['password'] == request.form['password2']:
-        # change password here
+        # TODO database: implement password changes, including hashing
+        # No need to check current password as this is an admin feature
         flash("Password changed")
         return redirect(url_for('admin'))
     else:
@@ -132,7 +149,7 @@ def toggle():
     host = request.form['host']
     plug = request.form['plug']
 
-    # Talk to the C code here
+    # Connect to the daemon here
 
     # Now tell the user that we've done it
     flash('Toggled plug ' + plug + ' on host ' + host + '.')

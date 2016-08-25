@@ -28,9 +28,9 @@
                     <p>
 
                         {% if plug_socket.status == 1 %}
-                            On
+                            <img src="{{ url_for('static', filename='img/green_dot.svg') }}" height="12" width="12"/> On
                         {% elif plug_socket.status == 0 %}
-                            Off
+                            <img src="{{ url_for('static', filename='img/red_dot.svg') }}" height="12" width="12"/> Off
                         {% else %}
                             Unknown
                         {% endif %}
