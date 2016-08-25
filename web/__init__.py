@@ -76,7 +76,14 @@ def login():
 @login_required
 @admin_required
 def admin():
-    return render_template("admin.html") #TODO database: populate the users list from the DB
+
+    db_session = get_db_session()
+    try:
+        users = db_session.query(db_user).all()
+    finally:
+        db_session.close()
+
+    return render_template("admin.html", users=users)  # TODO database: populate the users list from the DB
 
 
 @app.route("/add_user", methods=['POST', 'GET'])
@@ -103,11 +110,12 @@ def add_user():
         flash('User added')
         return redirect(url_for('admin'))
 
+
 @app.route("/admin_change_password/<user_id>", methods=['GET'])
 @login_required
 @admin_required
 def admin_change_password(user_id):
-    session['tmp_user_id_to_change'] = user_id #this is a bit hacky but by far the easiest way
+    session['tmp_user_id_to_change'] = user_id  # this is a bit hacky but by far the easiest way
     return render_template("admin_change_password.html")
 
 
@@ -158,7 +166,7 @@ def admin_change_password_process():
     if request.form['password'] == request.form['password2']:
         user_id = session['tmp_user_id_to_change']
         password = request.form['password']
-        #TODO: Give me a `user_id` and `password`
+
         db_session = get_db_session()
         try:
             pwd_hash = pwd_context.encrypt(password)
@@ -169,7 +177,6 @@ def admin_change_password_process():
         finally:
             session['tmp_user_id_to_change'] = None
             db_session.close()
-
 
         # No need to check current password as this is an admin feature
         flash("Password changed")
