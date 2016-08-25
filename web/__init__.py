@@ -5,7 +5,7 @@ from passlib.apps import custom_app_context as pwd_context
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from .orm_template import db_user
+from .orm_template import db_user, db_host, db_plugSocket
 
 app = Flask(__name__)
 
@@ -27,7 +27,18 @@ def login_required(f):
 @app.route("/")
 @login_required
 def index():
-    return render_template('index.html')
+    # Guarantee the database connection is closed
+    db_session = get_db_session()
+    try:
+        #query = db_session.query(db_plugSocket, db_host).join(db_host).all()
+        query = db_session.query(db_plugSocket).all()
+        # for item in query:
+            # print(item.db_plugSocket)
+            # print(item.db_host.ip_address)
+    finally:
+        db_session.close()
+
+    return render_template('index.html', query=query)
 
 
 @app.route("/login", methods=['POST', 'GET'])

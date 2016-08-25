@@ -23,6 +23,9 @@ class db_host(Base):
     ip_address = Column(String)
     port = Column(String)
 
+    def __repr__(self):
+        return "<Host(ip_address='%s', port='%s')>" % (self.ip_address, self.port)
+
 
 class db_plugSocket(Base):
     __tablename__ = 'plug_sockets'
@@ -32,6 +35,9 @@ class db_plugSocket(Base):
     plug_id = Column(String)
     name = Column(String)
     status = Column(Integer)
+
+    def __repr__(self):
+        return "<Plug Socket(host_id='%s', plug_id='%s', name='%s', status='%s')>" % (self.host_id, self.plug_id, self.name, self.status)
 
 
 def add_test_user():
