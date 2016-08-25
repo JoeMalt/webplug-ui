@@ -90,7 +90,7 @@ def add_user():
         password = request.form['password']
         is_admin = request.form['is_admin']
         
-        #TODO: insert this data into database, including password hashing 
+        #TODO database: insert this data into database, including password hashing 
         
         flash('User added')
         return redirect(url_for('admin'))
@@ -127,7 +127,8 @@ def toggle_admin():
 @admin_required
 def admin_change_password_process():
     if request.form['password'] == request.form['password2']:
-        # change password here
+        # TODO database: implement password changes, including hashing
+        # No need to check current password as this is an admin feature
         flash("Password changed")
         return redirect(url_for('admin'))
     else:
