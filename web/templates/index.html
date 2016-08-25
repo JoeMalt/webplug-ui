@@ -48,6 +48,21 @@
             </tr>
             {% endfor %}
 		</table>
+        <br />
+        <h1>Your Schedule Rules</h1>
+        <table>
+            <tr><th>Device</th><th>Time on</th><th>Time off</th><th>Runs on:</th></tr>
+            {% for schedule_rule in schedule_rules %}
+            <tr>
+                <td>{{ schedule_rule.db_plugSocket.name }}</td>
+                <td>{{ schedule_rule.db_scheduleRule.on_time }}</td>
+                <td>{{ schedule_rule.db_scheduleRule.off_time }}</td>
+                <td></td>
+            </tr>
+            {% endfor %}
+        </table>
+        
+        
         {% if session['is_admin'] %}
             <p><a href="{{ url_for('admin') }}">Manage users</a></p>
         {% endif %}
