@@ -17,6 +17,7 @@ def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if 'username' not in session.keys() or session['username'] == None:
+            flash("You need to login to access this page")
             return redirect(url_for('login'))
         return f(*args, **kwargs)
 
