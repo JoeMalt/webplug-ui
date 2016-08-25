@@ -82,7 +82,7 @@ def verify_credentials(username, password):
     finally:
         db_session.close()
 
-    if pwd_context.verify(password, user.pwd_hash):
+    if user is not None and pwd_context.verify(password, user.pwd_hash):
         return True
     else:
         return False
