@@ -1,11 +1,11 @@
-from flask import *
 from functools import wraps
+
+from flask import *
 from passlib.apps import custom_app_context as pwd_context
 
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
 
-from .orm_template import db_user, db_host, db_plugSocket
+from core.orm_template import db_user, db_plugSocket
+from core import get_db_session
 
 app = Flask(__name__)
 
@@ -75,15 +75,6 @@ def toggle():
     # Now tell the user that we've done it
     flash('Toggled plug ' + plug + ' on host ' + host + '.')
     return redirect(url_for('index'))
-
-
-def get_db_session():
-    engine = create_engine('sqlite:///web/webplug.db')
-    Session = sessionmaker(bind=engine)
-    db_session = Session()
-
-    return db_session
-
 
 def verify_credentials(username, password):
     # We need to guarantee closure of the database.
