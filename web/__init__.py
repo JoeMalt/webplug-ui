@@ -95,7 +95,7 @@ def add_user():
     elif request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        if "is_admin" in request.form.keys() and request.form['is_admin'] == 1:
+        if "is_admin" in request.form.keys() and request.form['is_admin'] == "on":
             is_admin = 1
         else:
             is_admin = 0
