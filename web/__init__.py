@@ -91,7 +91,7 @@ def admin_change_password(user_id):
 @admin_required
 def delete_user():
     user_id = request.form['user_id']
-    # database: delete user with user_id
+    # TODO database: delete user with user_id
     flash("User deleted")
     return redirect(url_for('admin'))
 
@@ -101,7 +101,7 @@ def delete_user():
 @admin_required
 def toggle_admin():
     user_id = request.form['user_id']
-    # database: toggle is_admin for user with user_id
+    # TODO database: toggle is_admin for user with user_id
     flash("Admin status toggled")
     return redirect(url_for('admin'))
 
@@ -132,7 +132,7 @@ def toggle():
     host = request.form['host']
     plug = request.form['plug']
 
-    # Talk to the C code here
+    # Connect to the daemon here
 
     # Now tell the user that we've done it
     flash('Toggled plug ' + plug + ' on host ' + host + '.')
