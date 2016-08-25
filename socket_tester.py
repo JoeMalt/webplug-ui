@@ -1,4 +1,4 @@
-from daemon import send_over_socket
+from daemon import msg_worker
 
 
-send_over_socket('QU', 1, 1)
+msg_worker('Q', 1, 1)

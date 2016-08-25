@@ -4,7 +4,7 @@ from core.orm_template import db_host, db_plugSocket
 from core import get_db_session
 
 
-def send_over_socket(command, host_id, plug_id):
+def msg_worker(command, host_id, plug_id):
     message = bytes(command + str(plug_id), 'UTF-8')
 
     db_session = get_db_session()
@@ -20,5 +20,8 @@ def send_over_socket(command, host_id, plug_id):
     s.connect((ip_address, port))
     print('Sending message.')
     s.send(message)
+    print('Waiting for message.')
+    returned = s.recv(1)
+    print(returned)
     print('Closing socket.')
     s.close()
