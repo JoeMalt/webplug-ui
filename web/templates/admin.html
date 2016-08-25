@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}"/>
+		<title>WEBplug</title>
+	</head>
+	<body>
+		
+		{% with messages = get_flashed_messages() %}
+			{% if messages %}
+				<ul class=flashes>
+					{% for message in messages %}
+						<li>{{ message }}</li>
+					{% endfor %}
+				</ul>
+			{% endif %}
+		{% endwith %}
+		
+		<h1>User Management</h1>
+		
+		<table>
+			<tr><th>Name</th><th>Role</th><th>Change password</th><th>Delete</th><th>Change role</th></tr>
+            <tr><td>Alice</td><td>Administrator</td><td><a href="/admin_change_password/1" >Change password</a></td><td><form method="post" action="/delete_user"><input type="hidden" name="user_id" value="1" /><input type="submit" value="Delete" /></form></td><td><form method="post" action="/toggle_admin"><input type="hidden" name="user_id" value="1" /><input type="submit" value="Remove admin" /></form></td></tr>
+            <tr><td>Bob</td><td>User</td><td><a href="/admin_change_password/2" >Change password</a></td><td><form method="post" action="/delete_user"><input type="hidden" name="user_id" value="2" /><input type="submit" value="Delete" /></form></td><td><form method="post" action="/toggle_admin"><input type="hidden" name="user_id" value="2" /><input type="submit" value="Make admin" /></form></td></tr>
+		</table>
+	</body>
+</html>
+
+
