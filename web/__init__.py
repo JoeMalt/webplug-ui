@@ -57,6 +57,26 @@ def login():
             flash("Incorrect username or password")
             return redirect(url_for('login'))
 
+@app.route("/admin")
+@login_required
+def admin():
+    return render_template("admin.html")
+    
+@app.route("/admin_change_password/<user_id>", methods=['GET'])
+@login_required
+def admin_change_password(user_id):
+    return render_template("admin_change_password.html")
+
+@app.route("/admin_change_password", methods=['POST'])
+@login_required
+def admin_change_password_process():
+    if request.form['password'] == request.form['password2']:
+        # change password here
+        flash("Password changed")
+        return redirect(url_for('admin'))
+    else:
+        flash("Passwords do not match")
+        return redirect(url_for('admin_change_password', user_id = 1))
 
 @app.route("/logout")
 def logout():
