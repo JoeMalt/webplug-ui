@@ -76,7 +76,7 @@ def login():
 @login_required
 @admin_required
 def admin():
-    return render_template("admin.html")
+    return render_template("admin.html") #TODO database: populate the users list from the DB
 
 
 @app.route("/add_user", methods=['POST', 'GET'])
@@ -107,6 +107,7 @@ def add_user():
 @login_required
 @admin_required
 def admin_change_password(user_id):
+    session['tmp_user_id_to_change'] = user_id #this is a bit hacky but by far the easiest way
     return render_template("admin_change_password.html")
 
 
@@ -136,7 +137,7 @@ def toggle_admin():
 
     db_session = get_db_session()
     try:
-        user = db_session.query(db_user).filter(db_user.id = user_id).first()
+        user = db_session.query(db_user).filter(db_user.id == user_id).first()
         if user.is_admin == 0:
             user.is_admin = 1
         else:
@@ -155,6 +156,8 @@ def toggle_admin():
 @admin_required
 def admin_change_password_process():
     if request.form['password'] == request.form['password2']:
+        user_id = session['tmp_user_id_to_change']
+        password = request.form['password']
         #TODO: Give me a `user_id` and `password`
         db_session = get_db_session()
         try:
@@ -164,6 +167,7 @@ def admin_change_password_process():
             user.pwd_hash = pwd_hash
             db_session.commit()
         finally:
+            session['tmp_user_id_to_change'] = None
             db_session.close()
 
 
