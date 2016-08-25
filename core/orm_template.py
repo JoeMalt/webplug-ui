@@ -40,19 +40,6 @@ class db_plugSocket(Base):
     def __repr__(self):
         return "<Plug Socket(host_id='%s', plug_id='%s', name='%s', status='%s')>" % (self.host_id, self.plug_id, self.name, self.status)
 
-
-def add_test_user():
-    Session = sessionmaker(bind=engine)
-    db_session = Session()
-
-    pwd_hash = pwd_context.encrypt("asdf1234")
-
-    new_user = db_user(username="test", pwd_hash=pwd_hash)
-    db_session.add(new_user)
-    db_session.commit()
-    db_session.close()
-
-
 if __name__ == "__main__":
     from sqlalchemy import create_engine
     from sqlalchemy.orm import sessionmaker

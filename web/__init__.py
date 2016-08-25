@@ -89,9 +89,17 @@ def add_user():
         username = request.form['username']
         password = request.form['password']
         is_admin = request.form['is_admin']
-        
-        #TODO database: insert this data into database, including password hashing 
-        
+
+        db_session = get_db_session()
+        try:
+            pwd_hash = pwd_context.encrypt(password)
+
+            new_user = db_user(username=username, pwd_hash=pwd_hash, is_admin=is_admin)
+            db_session.add(new_user)
+            db_session.commit()
+        finally:
+            db_session.close()
+
         flash('User added')
         return redirect(url_for('admin'))
 
@@ -107,7 +115,15 @@ def admin_change_password(user_id):
 @admin_required
 def delete_user():
     user_id = request.form['user_id']
-    # TODO database: delete user with user_id
+
+    # Delete the selected user from the database.
+    db_session = get_db_session()
+    try:
+        db_session.query(db_user).filter(db_user.id == user_id).delete()
+        db_session.commit()
+    finally:
+        db_session.close()
+
     flash("User deleted")
     return redirect(url_for('admin'))
 
@@ -117,7 +133,19 @@ def delete_user():
 @admin_required
 def toggle_admin():
     user_id = request.form['user_id']
-    # TODO database: toggle is_admin for user with user_id
+
+    db_session = get_db_session()
+    try:
+        user = db_session.query(db_user).filter(db_user.id = user_id).first()
+        if user.is_admin == 0:
+            user.is_admin = 1
+        else:
+            user.is_admin = 0
+
+        db_session.commit()
+    finally:
+        db_session.close()
+
     flash("Admin status toggled")
     return redirect(url_for('admin'))
 
@@ -127,7 +155,18 @@ def toggle_admin():
 @admin_required
 def admin_change_password_process():
     if request.form['password'] == request.form['password2']:
-        # TODO database: implement password changes, including hashing
+        #TODO: Give me a `user_id` and `password`
+        db_session = get_db_session()
+        try:
+            pwd_hash = pwd_context.encrypt(password)
+
+            user = db_session.query(db_user).filter(db_user.id == user_id).first()
+            user.pwd_hash = pwd_hash
+            db_session.commit()
+        finally:
+            db_session.close()
+
+
         # No need to check current password as this is an admin feature
         flash("Password changed")
         return redirect(url_for('admin'))
