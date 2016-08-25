@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}"/>
+		<title>WEBplug</title>
+	</head>
+	<body>
+		
+		{% with messages = get_flashed_messages() %}
+			{% if messages %}
+				<ul class=flashes>
+					{% for message in messages %}
+						<li>{{ message }}</li>
+					{% endfor %}
+				</ul>
+			{% endif %}
+		{% endwith %}
+		
+		<h1>Add user</h1>
+		
+		<table>
+			<form method="post" action="/add_user">
+				<tr><td><label>Username<input type="text" name="username" /></label></td></tr>
+				<tr><td><label>Password<input type="password" name="password" /></label></td></tr>
+                <tr><td><label>Admin <input type="checkbox" name="is_admin" /></label></td></tr>
+				<tr><td><input type="submit" value="Add user" /></td></tr>
+			</form>
+		</table>
+	</body>
+</html>
+
+
+
+

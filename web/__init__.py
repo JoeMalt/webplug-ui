@@ -79,6 +79,22 @@ def admin():
     return render_template("admin.html")
 
 
+@app.route("/add_user", methods=['POST', 'GET'])
+@login_required
+@admin_required
+def add_user():
+    if request.method == 'GET':
+        return render_template('add_user.html')
+    elif request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        is_admin = request.form['is_admin']
+        
+        #TODO: insert this data into database, including password hashing 
+        
+        flash('User added')
+        return redirect(url_for('admin'))
+
 @app.route("/admin_change_password/<user_id>", methods=['GET'])
 @login_required
 @admin_required
