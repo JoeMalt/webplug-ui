@@ -45,7 +45,7 @@ def login():
         username = request.form['username']
         password = request.form['password']
 
-        if verify_credentials(username, password):
+        if verify_credentials(username, password) in [1, 2]:
             session['username'] = username
             flash("Successfully logged in")
             return redirect(url_for('index'))
@@ -110,6 +110,7 @@ def toggle():
     return redirect(url_for('index'))
 
 def verify_credentials(username, password):
+    # Returns 0 for bad credentials, 1 for standard user, 2 for admin
     # We need to guarantee closure of the database.
     db_session = get_db_session()
     try:
@@ -118,6 +119,10 @@ def verify_credentials(username, password):
         db_session.close()
 
     if user is not None and pwd_context.verify(password, user.pwd_hash):
-        return True
+        if user.is_admin == 1:
+            return 2:
+        return 1
     else:
-        return False
+        return 0
+        
+
