@@ -59,12 +59,29 @@ def admin():
     return render_template("admin.html")
     
 @app.route("/admin_change_password/<user_id>", methods=['GET'])
-@login_required
+@login_required #require admin
 def admin_change_password(user_id):
     return render_template("admin_change_password.html")
+    
+@app.route("/delete_user", methods=['POST'])
+@login_required #require admin
+def delete_user():
+    user_id = request.form['user_id']
+    #database: delete user with user_id
+    flash("User deleted")
+    return redirect(url_for('admin'))
+    
+@app.route("/toggle_admin", methods=['POST'])
+@login_required #require admin
+def toggle_admin():
+    user_id = request.form['user_id']
+    #database: toggle is_admin for user with user_id
+    flash("Admin status toggled")
+    return redirect(url_for('admin'))
+    
 
 @app.route("/admin_change_password", methods=['POST'])
-@login_required
+@login_required #require admin
 def admin_change_password_process():
     if request.form['password'] == request.form['password2']:
         # change password here
