@@ -17,7 +17,7 @@
 		{% endwith %}
 		
 		<h1>Add user</h1>
-		
+		<p><a href="{{ url_for('admin') }}">Back to Users</a></p>
 		<table>
 			<form method="post" action="/add_user">
 				<tr><td><label>Username<input type="text" name="username" /></label></td></tr>

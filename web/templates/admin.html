@@ -17,12 +17,12 @@
 		{% endwith %}
 		
 		<h1>User Management</h1>
-		
+		<p><a href="{{ url_for('add_user') }}">Add new user</a></p>
 		<table>
             <!-- database: need to actually list users here -->
 			<tr><th>Name</th><th>Role</th><th>Change password</th><th>Delete</th><th>Change role</th></tr>
 			{% for user in users %}
-                <tr><td>{{ user.username }}</td><td>{% if user.is_admin %} Administrator {% else %} User {% endif %}</td><td><a href="/admin_change_password/1" >Change password</a></td><td><form method="post" action="/delete_user"><input type="hidden" name="user_id" value="{{ user.id }}" /><input type="submit" value="Delete" /></form></td><td><form method="post" action="/toggle_admin"><input type="hidden" name="user_id" value="{{ user.id }}" /><input type="submit" value="{% if user.is_admin %} Remove Admin {% else %} Make Admin {% endif %}"/></form></td></tr>
+                <tr><td>{{ user.username }}</td><td>{% if user.is_admin %} Administrator {% else %} User {% endif %}</td><td><a href="/admin_change_password/{{ user.id }}" >Change password</a></td><td><form method="post" action="/delete_user"><input type="hidden" name="user_id" value="{{ user.id }}" /><input type="submit" value="Delete" /></form></td><td><form method="post" action="/toggle_admin"><input type="hidden" name="user_id" value="{{ user.id }}" /><input type="submit" value="{% if user.is_admin %} Remove Admin {% else %} Make Admin {% endif %}"/></form></td></tr>
             {% endfor %}
 		</table>
 	</body>
