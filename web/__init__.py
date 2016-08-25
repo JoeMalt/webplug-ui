@@ -16,7 +16,7 @@ app.config['SECRET_KEY'] = "sdfharwifsfhqht89qthehfq938rutu9e4ufgpWQEUFQEUF498"
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
-        if 'username' not in session.keys() or session['username'] == None:
+        if 'username' not in session.keys() or session['username'] is None:
             flash("You need to login to access this page")
             return redirect(url_for('login'))
         return f(*args, **kwargs)
@@ -30,11 +30,7 @@ def index():
     # Guarantee the database connection is closed
     db_session = get_db_session()
     try:
-        #query = db_session.query(db_plugSocket, db_host).join(db_host).all()
         query = db_session.query(db_plugSocket).all()
-        # for item in query:
-            # print(item.db_plugSocket)
-            # print(item.db_host.ip_address)
     finally:
         db_session.close()
 
