@@ -28,7 +28,7 @@ def admin_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
         if session['is_admin'] != True:
-            flash("You need to be an admin to access this page")
+            flash("You need to be an admin to access that page")
             return redirect(url_for('index'))
         return f(*args, **kwargs)
 
