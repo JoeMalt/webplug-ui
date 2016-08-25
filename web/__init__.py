@@ -136,7 +136,7 @@ def toggle_admin():
 
     db_session = get_db_session()
     try:
-        user = db_session.query(db_user).filter(db_user.id = user_id).first()
+        user = db_session.query(db_user).filter(db_user.id == user_id).first()
         if user.is_admin == 0:
             user.is_admin = 1
         else:
