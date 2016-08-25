@@ -1,5 +1,4 @@
 flask
 sqlalchemy
 service
-pysqlite
 passlib
