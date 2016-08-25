@@ -9,12 +9,13 @@ from service import find_syslog, Service
 
 class webplug_daemon(Service):
     def __init__(self, *args, **kwargs):
-        super(MyService, self).__init__(*args, **kwargs)
+        super(webplug_daemon, self).__init__(*args, **kwargs)
         self.logger.addHandler(SysLogHandler(address=find_syslog(),
                                              facility=SysLogHandler.LOG_DAEMON))
         self.logger.setLevel(logging.INFO)
 
     def run(self):
+        """
         # Create the server socket for receiving commands from the web interface.
         s = socket.socket(
             socket.AF_INET, socket.SOCK_STREAM)
@@ -40,6 +41,10 @@ class webplug_daemon(Service):
                 time.sleep(5)
         finally:
             s.close()
+        """
+        while not self.got_sigterm():
+            self.logger.info("I'm working...")
+            time.sleep(5)
 
 if __name__ == '__main__':
     import sys
