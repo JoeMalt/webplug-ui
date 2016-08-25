@@ -11,6 +11,7 @@ class db_user(Base):
     id = Column(Integer, primary_key=True)
     username = Column(String)
     pwd_hash = Column(String)
+    is_admin = Column(Integer, default=0)
 
     def __repr__(self):
         return "<User(username='%s', pwd_hash='%s')>" % (self.username, self.pwd_hash)
@@ -21,7 +22,7 @@ class db_host(Base):
 
     id = Column(Integer, primary_key=True)
     ip_address = Column(String)
-    port = Column(String)
+    port = Column(Integer)
 
     def __repr__(self):
         return "<Host(ip_address='%s', port='%s')>" % (self.ip_address, self.port)
