@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, ForeignKey
+from sqlalchemy import Column, Integer, String, ForeignKey, Time
 from sqlalchemy.ext.declarative import declarative_base
 from passlib.apps import custom_app_context as pwd_context
 
@@ -40,11 +40,21 @@ class db_plugSocket(Base):
     def __repr__(self):
         return "<Plug Socket(host_id='%s', plug_id='%s', name='%s', status='%s')>" % (self.host_id, self.plug_id, self.name, self.status)
 
+class schedule_rule(Base):
+    __tablename__ = "schedule_rules"
+
+    id = Column(Integer, primary_key=True)
+    device_id = Column(Integer, ForeignKey("plug_sockets.id"))
+    on_time = Column(Time)
+    off_time = Column(Time)
+    days = Column(String)
+
+
 if __name__ == "__main__":
     from sqlalchemy import create_engine
     from sqlalchemy.orm import sessionmaker
 
-    engine = create_engine('sqlite:///webplug.db')
+    engine = create_engine('sqlite:///../web/webplug.db')
 
     Base.metadata.create_all(engine)
 
