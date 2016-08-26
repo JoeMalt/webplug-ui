@@ -12,3 +12,14 @@ div#header_bar
 {
     background: #CCFFCC;
 }
+
+.align_left
+{
+   
+}
+
+.align_right
+{
+    position: absolute;
+    right: 15px;
+}
