@@ -62,6 +62,9 @@
 		</table>
         <br />
         <h1>Your Schedule Rules</h1>
+        {% if session['is_admin'] %}
+            <p><a href="{{ url_for('add_schedule_rule') }}">Add a new rule</a></p>
+        {% endif %}
         <table>
             <tr><th>Device</th><th>Time on</th><th>Time off</th><th>Runs on:</th>{% if session['is_admin'] %}<th>Delete</th>{% endif %}</tr>
             {% for schedule_rule in schedule_rules %}
