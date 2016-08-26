@@ -1,98 +1,127 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}"/>
-        <script type="text/javascript" src="{{ url_for('static', filename='scripts/jquery.min.js')}}"></script>
-        <script type="text/javascript" src="{{ url_for('static', filename='scripts/jquery.form.js')}}"></script>
-		<title>WEBplug</title>
-	</head>
-	<body>
-		
-		{% with messages = get_flashed_messages() %}
-			{% if messages %}
-				<ul class=flashes>
-					{% for message in messages %}
-						<li>{{ message }}</li>
-					{% endfor %}
-				</ul>
-			{% endif %}
-		{% endwith %}
-		
-		<h1>Your Devices</h1>
-		
-		<table>
-			<tr><th>Name</th><th>Plug</th><th>Status</th></tr>
-            {% for plug_socket in query %}
-			<tr>
-                <td>
-                    <p>{%if plug_socket.name != None %}{{ plug_socket.name }}{% else %} <i>Unnamed device</i> {% endif %}</p>
-                    {% if session['is_admin'] %}<p><a href="/rename_device/{{ plug_socket.id }}"><small>{%if plug_socket.name != None %}Change name{% else %}Set name{% endif %}</small></a></p>{% endif %}
-                </td>
-                <td>{{ plug_socket.plug_id }}</td>
-                <td>
-                    <p>
+<head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}"/>
+    <script type="text/javascript" src="{{ url_for('static', filename='scripts/jquery.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='scripts/jquery.form.js') }}"></script>
+    <title>WEBplug</title>
+</head>
+<body>
 
-                        {% if plug_socket.status == 1 %}
-                            <img src="{{ url_for('static', filename='img/green_dot.svg') }}" height="12" width="12"/> On
-                        {% elif plug_socket.status == 0 %}
-                            <img src="{{ url_for('static', filename='img/red_dot.svg') }}" height="12" width="12"/> Off
-                        {% else %}
-                            Unknown
-                        {% endif %}
-
-                    </p>
-                    <form id="{{plug_socket.id}}" method="post" action="/toggle">
-                        <input type="hidden" name="host" value="{{ plug_socket.host_id }}" />
-                        <input type="hidden" name="plug" value="{{ plug_socket.plug_id }}" />
-                        <input type="submit" value="Toggle"/>
-                    </form>
-                        <script>
-                            // wait for the DOM to be loaded
-                            $(document).ready(function() {
-                                alert("Test!");
-                                // bind 'myForm' and provide a simple callback function
-                                $('#{{ plug_socket.id }}').ajaxForm(function() {
-                                    alert("Thank you for your comment!");
-                                });
-                            });
-                        </script>
-			    </td>
-            </tr>
+{% with messages = get_flashed_messages() %}
+    {% if messages %}
+        <ul class=flashes>
+            {% for message in messages %}
+                <li>{{ message }}</li>
             {% endfor %}
-		</table>
-        <br />
-        <h1>Your Schedule Rules</h1>
-        <table>
-            <tr><th>Device</th><th>Time on</th><th>Time off</th><th>Runs on:</th>{% if session['is_admin'] %}<th>Delete</th>{% endif %}</tr>
-            {% for schedule_rule in schedule_rules %}
-            <tr>
-                <td>{{ schedule_rule.db_plugSocket.name }}</td>
-                <td>{{ schedule_rule.db_scheduleRule.on_time }}</td>
-                <td>{{ schedule_rule.db_scheduleRule.off_time }}</td>
-                <td>
-                    {% if schedule_rule.db_scheduleRule.days[0] == '1' %}Monday{% endif %}
-                    {% if schedule_rule.db_scheduleRule.days[1] == '1' %}Tuesday{% endif %}
-                    {% if schedule_rule.db_scheduleRule.days[2] == '1' %}Wednesday{% endif %}
-                    {% if schedule_rule.db_scheduleRule.days[3] == '1' %}Thursday{% endif %}
-                    {% if schedule_rule.db_scheduleRule.days[4] == '1' %}Friday{% endif %}
-                    {% if schedule_rule.db_scheduleRule.days[5] == '1' %}Saturday{% endif %}
-                    {% if schedule_rule.db_scheduleRule.days[6] == '1' %}Sunday{% endif %}
-                </td>
+        </ul>
+    {% endif %}
+{% endwith %}
+
+<h1>Your Devices</h1>
+
+<table>
+    <tr>
+        <th>Name</th>
+        <th>Plug</th>
+        <th>Status</th>
+    </tr>
+    {% for plug_socket in query %}
+        <tr id="plug_row_{{ plug_socket.id }}">
+            <td>
+                <p>{% if plug_socket.name != None %}{{ plug_socket.name }}{% else %} <i>Unnamed device</i> {% endif %}
+                </p>
                 {% if session['is_admin'] %}
+                    <p><a href="/rename_device/{{ plug_socket.id }}">
+                        <small>{% if plug_socket.name != None %}Change name{% else %}Set name{% endif %}</small>
+                    </a></p>{% endif %}
+            </td>
+            <td>{{ plug_socket.plug_id }}</td>
+            <td>
+                <p>
+
+                    {% if plug_socket.status == 1 %}
+                        <img class="status_image" src="{{ url_for('static', filename='img/green_dot.svg') }}" height="12" width="12"/> On
+                    {% elif plug_socket.status == 0 %}
+                        <img class="status_image" src="{{ url_for('static', filename='img/red_dot.svg') }}" height="12" width="12"/> Off
+                    {% else %}
+                        Unknown
+                    {% endif %}
+
+                </p>
+                <form id="{{ plug_socket.id }}" method="post" action="/toggle">
+                    <input type="hidden" name="host" value="{{ plug_socket.host_id }}"/>
+                    <input type="hidden" name="plug" value="{{ plug_socket.plug_id }}"/>
+                    <input type="submit" value="Toggle"/>
+                </form>
+                <script>
+                    $(document).ready(function () {
+                        var options = {
+                            success: function(responseText, statusText, xhr, $form){toggle_colour("#plug_row_{{ plug_socket.id }}", responseText)} // post-submit callback
+                        };
+
+                        // bind form using 'ajaxForm'
+                        $('#myForm1').ajaxForm(options);
+                    });
+                </script>
+            </td>
+        </tr>
+    {% endfor %}
+</table>
+<br/>
+<h1>Your Schedule Rules</h1>
+<table>
+    <tr>
+        <th>Device</th>
+        <th>Time on</th>
+        <th>Time off</th>
+        <th>Runs on:</th>{% if session['is_admin'] %}
+        <th>Delete</th>{% endif %}</tr>
+    {% for schedule_rule in schedule_rules %}
+        <tr>
+            <td>{{ schedule_rule.db_plugSocket.name }}</td>
+            <td>{{ schedule_rule.db_scheduleRule.on_time }}</td>
+            <td>{{ schedule_rule.db_scheduleRule.off_time }}</td>
+            <td>
+                {% if schedule_rule.db_scheduleRule.days[0] == '1' %}Monday{% endif %}
+                {% if schedule_rule.db_scheduleRule.days[1] == '1' %}Tuesday{% endif %}
+                {% if schedule_rule.db_scheduleRule.days[2] == '1' %}Wednesday{% endif %}
+                {% if schedule_rule.db_scheduleRule.days[3] == '1' %}Thursday{% endif %}
+                {% if schedule_rule.db_scheduleRule.days[4] == '1' %}Friday{% endif %}
+                {% if schedule_rule.db_scheduleRule.days[5] == '1' %}Saturday{% endif %}
+                {% if schedule_rule.db_scheduleRule.days[6] == '1' %}Sunday{% endif %}
+            </td>
+            {% if session['is_admin'] %}
                 <td>
                     <form method="post" action="/delete_schedule_rule">
-                        <input type="hidden" name="schedule_rule_id" value="{{ schedule_rule.db_scheduleRule.id }}" /><input type="submit" value="Delete" />
+                        <input type="hidden" name="schedule_rule_id"
+                               value="{{ schedule_rule.db_scheduleRule.id }}"/><input type="submit" value="Delete"/>
                     </form>
                 </td>
-                {% endif %}
-            </tr>
-            {% endfor %}
-        </table>
-        
-        
-        {% if session['is_admin'] %}
-            <p><a href="{{ url_for('admin') }}">Manage users</a></p>
-        {% endif %}
-	</body>
+            {% endif %}
+        </tr>
+    {% endfor %}
+</table>
+
+
+{% if session['is_admin'] %}
+    <p><a href="{{ url_for('admin') }}">Manage users</a></p>
+{% endif %}
+
+<script type="text/javascript">
+
+    function toggle_colour(table_row, ajaxResponse)
+    {
+        var img_source = $( table_row ).find( ".status_image" ).attr("src");
+        if(img_source == "/static/img/red_dot.svg") {
+            $(table_row).find(".status_image").attr("src", "/static/img/green_dot.svg");
+        }
+        else{
+            $(table_row).find(".status_image").attr("src", "/static/img/red_dot.svg");
+        }
+    }
+
+</script>
+</body>
 </html>
 
