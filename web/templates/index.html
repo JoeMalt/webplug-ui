@@ -51,13 +51,28 @@
         <br />
         <h1>Your Schedule Rules</h1>
         <table>
-            <tr><th>Device</th><th>Time on</th><th>Time off</th><th>Runs on:</th></tr>
+            <tr><th>Device</th><th>Time on</th><th>Time off</th><th>Runs on:</th>{% if session['is_admin'] %}<th>Delete</th>{% endif %}</tr>
             {% for schedule_rule in schedule_rules %}
             <tr>
                 <td>{{ schedule_rule.db_plugSocket.name }}</td>
                 <td>{{ schedule_rule.db_scheduleRule.on_time }}</td>
                 <td>{{ schedule_rule.db_scheduleRule.off_time }}</td>
-                <td></td>
+                <td>
+                    {% if schedule_rule.db_scheduleRule.days[0] == '1' %}Monday{% endif %}
+                    {% if schedule_rule.db_scheduleRule.days[1] == '1' %}Tuesday{% endif %}
+                    {% if schedule_rule.db_scheduleRule.days[2] == '1' %}Wednesday{% endif %}
+                    {% if schedule_rule.db_scheduleRule.days[3] == '1' %}Thursday{% endif %}
+                    {% if schedule_rule.db_scheduleRule.days[4] == '1' %}Friday{% endif %}
+                    {% if schedule_rule.db_scheduleRule.days[5] == '1' %}Saturday{% endif %}
+                    {% if schedule_rule.db_scheduleRule.days[6] == '1' %}Sunday{% endif %}
+                </td>
+                {% if session['is_admin'] %}
+                <td>
+                    <form method="post" action="/delete_schedule_rule">
+                        <input type="hidden" name="schedule_rule_id" value="{{ schedule_rule.db_scheduleRule.id }}" /><input type="submit" value="Delete" />
+                    </form>
+                </td>
+                {% endif %}
             </tr>
             {% endfor %}
         </table>

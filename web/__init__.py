@@ -261,6 +261,27 @@ def toggle():
     return redirect(url_for('index'))
 
 
+#SCHEDULING
+@app.route("/delete_schedule_rule", methods=['POST'])
+@login_required
+@admin_required
+def delete_schedule_rule():
+    schedule_rule_id = request.form['schedule_rule_id']
+
+    # Delete the selected user from the database.
+    db_session = get_db_session()
+    try:
+        db_session.query(db_scheduleRule).filter(db_scheduleRule.id == schedule_rule_id).delete()
+        db_session.commit()
+    finally:
+        db_session.close()
+
+    flash("Schedule rule deleted")
+    return redirect(url_for('index'))
+
+
+
+
 def verify_credentials(username, password):
     # Returns 0 for bad credentials, 1 for standard user, 2 for admin
     # We need to guarantee closure of the database.
