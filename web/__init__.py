@@ -6,6 +6,8 @@ from passlib.apps import custom_app_context as pwd_context
 from core.orm_template import db_user, db_host, db_plugSocket, db_scheduleRule
 from core import get_db_session, msg_worker
 
+from datetime import datetime
+
 app = Flask(__name__)
 
 # Config
@@ -265,7 +267,7 @@ def toggle():
 @app.route("/delete_schedule_rule", methods=['POST'])
 @login_required
 @admin_required
-dojnef delete_schedule_rule():
+def delete_schedule_rule():
     schedule_rule_id = request.form['schedule_rule_id']
 
     # Delete the selected user from the database.
@@ -288,23 +290,28 @@ def add_schedule_rule():
         return render_template('add_schedule_rule.html') #todo: populate dropdown of devices
     elif request.method == 'POST':
         device_id = request.form['device_id']
-        on_time = request.form['on_time'] #should be DateTime.Time objects?
-        off_time = request.form['off_time']
-        days="0000000"
-        days[0] = 1 if request.form['run_mon'] == "on" else 0
-        days[1] = 1 if request.form['run_tue'] == "on" else 0
-        days[2] = 1 if request.form['run_wed'] == "on" else 0
-        days[3] = 1 if request.form['run_thu'] == "on" else 0
-        days[4] = 1 if request.form['run_fri'] == "on" else 0
-        days[5] = 1 if request.form['run_sat'] == "on" else 0
-        days[6] = 1 if request.form['run_sun'] == "on" else 0
+        on_time_str = request.form['on_time'] #should be DateTime.Time objects?
+        off_time_str = request.form['off_time']
+        
+        #convert times to Python Time objects
+        on_time = datetime.strptime(on_time_str, "%H:%M")
+        off_time = datetime.strptime(off_time_str, "%H:%M")
+        days=""
+        days = days + ("1" if 'run_mon' in request.form.keys() and request.form['run_mon'] == "on" else "0")
+        days = days + ("1" if 'run_tue' in request.form.keys() and request.form['run_tue'] == "on" else "0")
+        days = days + ("1" if 'run_wed' in request.form.keys() and request.form['run_wed'] == "on" else "0")
+        days = days + ("1" if 'run_thu' in request.form.keys() and request.form['run_thu'] == "on" else "0")
+        days = days + ("1" if 'run_fri' in request.form.keys() and request.form['run_fri'] == "on" else "0")
+        days = days + ("1" if 'run_sat' in request.form.keys() and request.form['run_sat'] == "on" else "0")
+        days = days + ("1" if 'run_sun' in request.form.keys() and request.form['run_sun'] == "on" else "0")
+        
             
 
         db_session = get_db_session()
         try:
 
             #new_user = db_user(username=username, pwd_hash=pwd_hash, is_admin=is_admin)
-            new_schedule_rule = db_scheduleRule(device_id=device_id, on_time=on_time, off_time=off_time, days=days
+            new_schedule_rule = db_scheduleRule(device_id=device_id, on_time=on_time, off_time=off_time, days=days)
             db_session.add(new_schedule_rule)
             db_session.commit()
         finally:
