@@ -305,10 +305,10 @@ def add_schedule_rule():
             db_session.close()
         
         
-        return render_template('add_schedule_rule.html', plug_sockets=plug_sockets) #todo: populate dropdown of devices
+        return render_template('add_schedule_rule.html', plug_sockets=plug_sockets) 
     elif request.method == 'POST':
         device_id = request.form['device_id']
-        on_time_str = request.form['on_time'] #should be DateTime.Time objects?
+        on_time_str = request.form['on_time'] 
         off_time_str = request.form['off_time']
         
         #convert times to Python Time objects
