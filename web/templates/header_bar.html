@@ -1,0 +1,6 @@
+<div id="header_bar">
+            {% if 'username' in session %}
+                <span>Welcome, {{ session.username }} {% if session['is_admin'] %} (Admin) {% endif %}</span>
+                <span><a href="{{ url_for('logout') }}">Logout</a></span>
+            {% endif %}
+</div>

@@ -7,3 +7,8 @@ th
 {
 	border: 1.5px solid black;
 }
+
+div#header_bar
+{
+    background: #CCFFCC;
+}
