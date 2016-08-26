@@ -1,9 +1,11 @@
 <div id="header_bar">
-            {% if 'username' in session %}
+            {% if 'username' in session and session['username'] != None %}
                 <span class="align_left">
                     WEBplug &middot; <a href="{{ url_for('index') }}">Home</a>{% if session['is_admin'] %} &middot; <a href="{{ url_for('admin') }}">Manage users</a> {% endif %}
                 </span>
                 <span class="align_right">Welcome, <b>{{ session.username }}</b> {% if session['is_admin'] %} (Admin) {% endif %} &middot;
                 <a href="{{ url_for('logout') }}">Logout</a></span>
+            {% else %}
+                <span class="align_left">WEBplug</span>
             {% endif %}
 </div>

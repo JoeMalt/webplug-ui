@@ -231,6 +231,7 @@ def toggle_admin():
 @login_required
 def logout():
     session['username'] = None
+    session['is_admin'] = False
     flash("Successfully logged out")
     return redirect(url_for('login'))
 
