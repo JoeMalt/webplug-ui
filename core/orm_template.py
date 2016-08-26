@@ -21,11 +21,12 @@ class db_host(Base):
     __tablename__ = 'hosts'
 
     id = Column(Integer, primary_key=True)
+    name = Column(String)
     ip_address = Column(String)
     port = Column(Integer)
 
     def __repr__(self):
-        return "<Host(ip_address='%s', port='%s')>" % (self.ip_address, self.port)
+        return "<Host(name='%s', ip_address='%s', port='%s')>" % (self.name, self.ip_address, self.port)
 
 
 class db_plugSocket(Base):

@@ -8,21 +8,14 @@
 </head>
 <body>
 
-{% with messages = get_flashed_messages() %}
-    {% if messages %}
-        <ul class=flashes>
-            {% for message in messages %}
-                <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
-{% endwith %}
+<ul id="notifications"></ul>
 
 <h1>Your Devices</h1>
 
 <table>
     <tr>
         <th>Name</th>
+        <th>Host</th>
         <th>Plug</th>
         <th>Status</th>
     </tr>
@@ -41,9 +34,11 @@
                 <p>
 
                     {% if plug_socket.status == 1 %}
-                        <img class="status_image" src="{{ url_for('static', filename='img/green_dot.svg') }}" height="12" width="12"/> On
+                        <img class="status_image" src="{{ url_for('static', filename='img/green_dot.svg') }}"
+                             height="12" width="12"/> On
                     {% elif plug_socket.status == 0 %}
-                        <img class="status_image" src="{{ url_for('static', filename='img/red_dot.svg') }}" height="12" width="12"/> Off
+                        <img class="status_image" src="{{ url_for('static', filename='img/red_dot.svg') }}" height="12"
+                             width="12"/> Off
                     {% else %}
                         Unknown
                     {% endif %}
@@ -57,11 +52,18 @@
                 <script>
                     $(document).ready(function () {
                         var options = {
-                            success: function(responseText, statusText, xhr, $form){toggle_colour("#plug_row_{{ plug_socket.id }}", responseText)} // post-submit callback
+                            beforeSubmit: function () {
+                                add_loading_gif("#plug_row_{{ plug_socket.id }}")
+                            },
+                            success: function (responseText, statusText, xhr, $form) {
+                                toggle_colour("#plug_row_{{ plug_socket.id }}", responseText);
+                            },
+                            url: "/toggle",
+                            type: "POST"
                         };
 
                         // bind form using 'ajaxForm'
-                        $('#myForm1').ajaxForm(options);
+                        $('#plug_row_{{ plug_socket.id }}').ajaxForm(options);
                     });
                 </script>
             </td>
@@ -92,7 +94,7 @@
                 {% if schedule_rule.db_scheduleRule.days[6] == '1' %}Sunday{% endif %}
             </td>
             {% if session['is_admin'] %}
-                    
+
                 <td>
                     <form method="post" action="/delete_schedule_rule">
                         <input type="hidden" name="schedule_rule_id"
@@ -111,15 +113,41 @@
 
 <script type="text/javascript">
 
-    function toggle_colour(table_row, ajaxResponse)
-    {
-        var img_source = $( table_row ).find( ".status_image" ).attr("src");
-        if(img_source == "/static/img/red_dot.svg") {
-            $(table_row).find(".status_image").attr("src", "/static/img/green_dot.svg");
+    var status_storage = {};
+
+    function add_loading_gif(table_row) {
+
+        var img = $(table_row).find(".status_image");
+        if (img.attr("src") == "/static/img/green_dot.svg") {
+            status_storage[table_row] = 1;
         }
-        else{
-            $(table_row).find(".status_image").attr("src", "/static/img/red_dot.svg");
+        else {
+            status_storage[table_row] = 0;
         }
+
+        img.attr("src", "/static/img/spinner_12px.gif");
+
+    }
+
+    function toggle_colour(table_row, ajaxResponse) {
+        var ajaxResponse = JSON.parse(ajaxResponse)
+        if (ajaxResponse["status"] == "Success") {
+            if (status_storage[table_row] == 0) {
+                $(table_row).find(".status_image").attr("src", "/static/img/green_dot.svg");
+            }
+            else {
+                $(table_row).find(".status_image").attr("src", "/static/img/red_dot.svg");
+            }
+        }
+        else if (ajaxResponse["status"] == "Failure") {
+            if (status_storage[table_row] == 0) {
+                $(table_row).find(".status_image").attr("src", "/static/img/red_dot.svg");
+            }
+            else {
+                $(table_row).find(".status_image").attr("src", "/static/img/green_dot.svg");
+            }
+        }
+        $( "#notifications" ).html("<li>" + ajaxResponse["content"] + "</li>")
     }
 
 </script>

@@ -7,7 +7,7 @@ from core.orm_template import db_user, db_host, db_plugSocket, db_scheduleRule
 from core import get_db_session, msg_worker
 
 from datetime import datetime, time
-
+import json
 app = Flask(__name__)
 
 # Config
@@ -240,27 +240,35 @@ def toggle():
     host = request.form['host']
     plug = request.form['plug']
 
+    response = {}
+
     # Connect to the daemon here
     db_session = get_db_session()
     try:
         query = db_session.query(db_plugSocket, db_host).filter(db_plugSocket.host_id == host,
                                                                 db_plugSocket.plug_id == plug).join(db_host).first()
-        if query.db_plugSocket.status == 0:
+        if query.db_plugSocket.status == 0 and query.db_plugSocket.status is not None:
             # Turn it on
-            if msg_worker('N', host, plug):
-                flash('Toggled plug ' + plug + ' on host ' + host + '.')
+            worker_response = msg_worker('N', host, plug)
+            if worker_response[0]:
+                response['status'] = 'Success'
+                response['content'] = 'Toggled plug ' + plug + ' on host ' + host + '.'
             else:
-                flash('Host {} was not connectable.'.format(host))
+                response['status'] = 'Failure'
+                response['content'] = worker_response[1]
         else:
             # If anything else, just turn it off to be safe
-            if msg_worker('F', host, plug):
-                flash('Toggled plug ' + plug + ' on host ' + host + '.')
+            worker_response = msg_worker('F', host, plug)
+            if worker_response[0]:
+                response['status'] = 'Success'
+                response['content'] = 'Toggled plug ' + plug + ' on host ' + host + '.'
             else:
-                flash('Host {} was not connectable.'.format(host))
+                response['status'] = 'Failure'
+                response['content'] = worker_response[1]
     finally:
         db_session.close
 
-    return redirect(url_for('index'))
+    return json.dumps(response)
 
 
 #SCHEDULING
