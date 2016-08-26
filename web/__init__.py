@@ -243,7 +243,7 @@ def toggle():
 
     response = {}
 
-    # Connect to the daemon here
+    # Connect to the scheduling_daemon here
     db_session = get_db_session()
     try:
         query = db_session.query(db_plugSocket, db_host).filter(db_plugSocket.host_id == host,
