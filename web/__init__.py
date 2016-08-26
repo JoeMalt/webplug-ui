@@ -265,7 +265,7 @@ def toggle():
 @app.route("/delete_schedule_rule", methods=['POST'])
 @login_required
 @admin_required
-def delete_schedule_rule():
+dojnef delete_schedule_rule():
     schedule_rule_id = request.form['schedule_rule_id']
 
     # Delete the selected user from the database.
@@ -280,6 +280,38 @@ def delete_schedule_rule():
     return redirect(url_for('index'))
 
 
+@app.route("/add_schedule_rule", methods=['POST', 'GET'])
+@login_required
+@admin_required
+def add_schedule_rule():
+    if request.method == 'GET':
+        return render_template('add_schedule_rule.html') #todo: populate dropdown of devices
+    elif request.method == 'POST':
+        device_id = request.form['device_id']
+        on_time = request.form['on_time'] #should be DateTime.Time objects?
+        off_time = request.form['off_time']
+        days="0000000"
+        days[0] = 1 if request.form['run_mon'] == "on" else 0
+        days[1] = 1 if request.form['run_tue'] == "on" else 0
+        days[2] = 1 if request.form['run_wed'] == "on" else 0
+        days[3] = 1 if request.form['run_thu'] == "on" else 0
+        days[4] = 1 if request.form['run_fri'] == "on" else 0
+        days[5] = 1 if request.form['run_sat'] == "on" else 0
+        days[6] = 1 if request.form['run_sun'] == "on" else 0
+            
+
+        db_session = get_db_session()
+        try:
+
+            #new_user = db_user(username=username, pwd_hash=pwd_hash, is_admin=is_admin)
+            new_schedule_rule = db_scheduleRule(device_id=device_id, on_time=on_time, off_time=off_time, days=days
+            db_session.add(new_schedule_rule)
+            db_session.commit()
+        finally:
+            db_session.close()
+
+        flash('User added')
+        return redirect(url_for('admin'))
 
 
 def verify_credentials(username, password):
