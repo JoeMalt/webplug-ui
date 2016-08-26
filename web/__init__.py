@@ -287,7 +287,13 @@ def delete_schedule_rule():
 @admin_required
 def add_schedule_rule():
     if request.method == 'GET':
-        return render_template('add_schedule_rule.html') #todo: populate dropdown of devices
+        #Get the list of plug_sockets so that we can populate the dropdown
+        db_session = get_db_session()
+        
+        plug_sockets = db_session.query(db_plugSocket).all()
+        
+        
+        return render_template('add_schedule_rule.html', plug_sockets=plug_sockets) #todo: populate dropdown of devices
     elif request.method == 'POST':
         device_id = request.form['device_id']
         on_time_str = request.form['on_time'] #should be DateTime.Time objects?
@@ -296,6 +302,7 @@ def add_schedule_rule():
         #convert times to Python Time objects
         on_time = datetime.strptime(on_time_str, "%H:%M").time()
         off_time = datetime.strptime(off_time_str, "%H:%M").time()
+        #populate the string mask of days to run
         days=""
         days = days + ("1" if 'run_mon' in request.form.keys() and request.form['run_mon'] == "on" else "0")
         days = days + ("1" if 'run_tue' in request.form.keys() and request.form['run_tue'] == "on" else "0")

@@ -21,7 +21,16 @@
 		<p><a href="{{ url_for('index') }}">Back to homepage</a></p>
 		<table>
 			<form method="post" action="/add_schedule_rule">
-				<tr><td><label>Device ID (will be a dropdown): <input type="text" name="device_id" /></label></td></tr>
+				<tr><td><label>Device ID: 
+                    <select name="device_id">
+                        {% for plug_socket in plug_sockets %}
+                            <option value="{{plug_socket.id}}">{{plug_socket.name}}</option>
+                        {% endfor %}
+                    </select>
+                </label></td></tr>
+                
+                
+                
                 <tr><td><label>On time: <input type="text" name="on_time" /></label></td></tr>
                 <tr><td><label>Off time: <input type="text" name="off_time" /></label></td></tr>
                 <tr><td><label>Monday<input type="checkbox" name="run_mon" /></label></td></tr>
