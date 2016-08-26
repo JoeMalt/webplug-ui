@@ -299,8 +299,10 @@ def add_schedule_rule():
     if request.method == 'GET':
         #Get the list of plug_sockets so that we can populate the dropdown
         db_session = get_db_session()
-        
-        plug_sockets = db_session.query(db_plugSocket).all()
+        try:
+            plug_sockets = db_session.query(db_plugSocket).all()
+        finally:
+            db_session.close()
         
         
         return render_template('add_schedule_rule.html', plug_sockets=plug_sockets) #todo: populate dropdown of devices
