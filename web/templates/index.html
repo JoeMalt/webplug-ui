@@ -92,6 +92,48 @@
                 {% if schedule_rule.db_scheduleRule.days[6] == '1' %}Sunday{% endif %}
             </td>
             {% if session['is_admin'] %}
+                    </p>
+                    <form id="{{plug_socket.id}}" method="post" action="/toggle">
+                        <input type="hidden" name="host" value="{{ plug_socket.host_id }}" />
+                        <input type="hidden" name="plug" value="{{ plug_socket.plug_id }}" />
+                        <input type="submit" value="Toggle"/>
+                    </form>
+                        <script>
+                            // wait for the DOM to be loaded
+                            $(document).ready(function() {
+                                alert("Test!");
+                                // bind 'myForm' and provide a simple callback function
+                                $('#{{ plug_socket.id }}').ajaxForm(function() {
+                                    alert("Thank you for your comment!");
+                                });
+                            });
+                        </script>
+			    </td>
+            </tr>
+            {% endfor %}
+		</table>
+        <br />
+        <h1>Your Schedule Rules</h1>
+        {% if session['is_admin'] %}
+            <p><a href="{{ url_for('add_schedule_rule') }}">Add a new rule</a></p>
+        {% endif %}
+        <table>
+            <tr><th>Device</th><th>Time on</th><th>Time off</th><th>Runs on:</th>{% if session['is_admin'] %}<th>Delete</th>{% endif %}</tr>
+            {% for schedule_rule in schedule_rules %}
+            <tr>
+                <td>{{ schedule_rule.db_plugSocket.name }}</td>
+                <td>{{ schedule_rule.db_scheduleRule.on_time }}</td>
+                <td>{{ schedule_rule.db_scheduleRule.off_time }}</td>
+                <td>
+                    {% if schedule_rule.db_scheduleRule.days[0] == '1' %}Monday{% endif %}
+                    {% if schedule_rule.db_scheduleRule.days[1] == '1' %}Tuesday{% endif %}
+                    {% if schedule_rule.db_scheduleRule.days[2] == '1' %}Wednesday{% endif %}
+                    {% if schedule_rule.db_scheduleRule.days[3] == '1' %}Thursday{% endif %}
+                    {% if schedule_rule.db_scheduleRule.days[4] == '1' %}Friday{% endif %}
+                    {% if schedule_rule.db_scheduleRule.days[5] == '1' %}Saturday{% endif %}
+                    {% if schedule_rule.db_scheduleRule.days[6] == '1' %}Sunday{% endif %}
+                </td>
+                {% if session['is_admin'] %}
                 <td>
                     <form method="post" action="/delete_schedule_rule">
                         <input type="hidden" name="schedule_rule_id"
