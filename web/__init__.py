@@ -6,6 +6,8 @@ from passlib.apps import custom_app_context as pwd_context
 from core.orm_template import db_user, db_host, db_plugSocket, db_scheduleRule
 from core import get_db_session, msg_worker
 
+from datetime import datetime, time
+
 app = Flask(__name__)
 
 # Config
@@ -288,16 +290,21 @@ def add_schedule_rule():
         return render_template('add_schedule_rule.html') #todo: populate dropdown of devices
     elif request.method == 'POST':
         device_id = request.form['device_id']
-        on_time = request.form['on_time'] #should be DateTime.Time objects?
-        off_time = request.form['off_time']
-        days="0000000"
-        days[0] = 1 if request.form['run_mon'] == "on" else 0
-        days[1] = 1 if request.form['run_tue'] == "on" else 0
-        days[2] = 1 if request.form['run_wed'] == "on" else 0
-        days[3] = 1 if request.form['run_thu'] == "on" else 0
-        days[4] = 1 if request.form['run_fri'] == "on" else 0
-        days[5] = 1 if request.form['run_sat'] == "on" else 0
-        days[6] = 1 if request.form['run_sun'] == "on" else 0
+        on_time_str = request.form['on_time'] #should be DateTime.Time objects?
+        off_time_str = request.form['off_time']
+        
+        #convert times to Python Time objects
+        on_time = datetime.strptime(on_time_str, "%H:%M").time()
+        off_time = datetime.strptime(off_time_str, "%H:%M").time()
+        days=""
+        days = days + ("1" if 'run_mon' in request.form.keys() and request.form['run_mon'] == "on" else "0")
+        days = days + ("1" if 'run_tue' in request.form.keys() and request.form['run_tue'] == "on" else "0")
+        days = days + ("1" if 'run_wed' in request.form.keys() and request.form['run_wed'] == "on" else "0")
+        days = days + ("1" if 'run_thu' in request.form.keys() and request.form['run_thu'] == "on" else "0")
+        days = days + ("1" if 'run_fri' in request.form.keys() and request.form['run_fri'] == "on" else "0")
+        days = days + ("1" if 'run_sat' in request.form.keys() and request.form['run_sat'] == "on" else "0")
+        days = days + ("1" if 'run_sun' in request.form.keys() and request.form['run_sun'] == "on" else "0")
+        
             
 
         db_session = get_db_session()
@@ -310,8 +317,8 @@ def add_schedule_rule():
         finally:
             db_session.close()
 
-        flash('User added')
-        return redirect(url_for('admin'))
+        flash('Rule added')
+        return redirect(url_for('index'))
 
 
 def verify_credentials(username, password):

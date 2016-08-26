@@ -1,1 +1,42 @@
 
+<!DOCTYPE html>
+<html>
+	<head>
+		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}"/>
+		<title>WEBplug</title>
+	</head>
+	<body>
+		
+		{% with messages = get_flashed_messages() %}
+			{% if messages %}
+				<ul class=flashes>
+					{% for message in messages %}
+						<li>{{ message }}</li>
+					{% endfor %}
+				</ul>
+			{% endif %}
+		{% endwith %}
+		
+		<h1>Add schedule rule</h1>
+		<p><a href="{{ url_for('index') }}">Back to homepage</a></p>
+		<table>
+			<form method="post" action="/add_schedule_rule">
+				<tr><td><label>Device ID (will be a dropdown): <input type="text" name="device_id" /></label></td></tr>
+                <tr><td><label>On time: <input type="text" name="on_time" /></label></td></tr>
+                <tr><td><label>Off time: <input type="text" name="off_time" /></label></td></tr>
+                <tr><td><label>Monday<input type="checkbox" name="run_mon" /></label></td></tr>
+                <tr><td><label>Tuesday<input type="checkbox" name="run_tue" /></label></td></tr>
+                <tr><td><label>Wednesday<input type="checkbox" name="run_wed" /></label></td></tr>
+                <tr><td><label>Thursday<input type="checkbox" name="run_thu" /></label></td></tr>
+                <tr><td><label>Friday<input type="checkbox" name="run_fri" /></label></td></tr>
+                <tr><td><label>Saturday<input type="checkbox" name="run_sat" /></label></td></tr>
+                <tr><td><label>Sunday<input type="checkbox" name="run_sun" /></label></td></tr>
+                <tr><td><input type="submit" value="Add schedule rule" /></td></tr>
+			</form>
+		</table>
+	</body>
+</html>
+
+
+
+
