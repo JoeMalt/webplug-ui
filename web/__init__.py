@@ -237,6 +237,7 @@ def logout():
 
 
 @app.route("/toggle", methods=['POST'])  # TODO: implement CSRF token
+@login_required
 def toggle():
     host = request.form['host']
     plug = request.form['plug']
@@ -298,14 +299,16 @@ def add_schedule_rule():
     if request.method == 'GET':
         #Get the list of plug_sockets so that we can populate the dropdown
         db_session = get_db_session()
+        try:
+            plug_sockets = db_session.query(db_plugSocket).all()
+        finally:
+            db_session.close()
         
-        plug_sockets = db_session.query(db_plugSocket).all()
         
-        
-        return render_template('add_schedule_rule.html', plug_sockets=plug_sockets) #todo: populate dropdown of devices
+        return render_template('add_schedule_rule.html', plug_sockets=plug_sockets) 
     elif request.method == 'POST':
         device_id = request.form['device_id']
-        on_time_str = request.form['on_time'] #should be DateTime.Time objects?
+        on_time_str = request.form['on_time'] 
         off_time_str = request.form['off_time']
         
         #convert times to Python Time objects
