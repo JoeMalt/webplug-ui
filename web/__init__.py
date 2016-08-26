@@ -237,6 +237,7 @@ def logout():
 
 
 @app.route("/toggle", methods=['POST'])  # TODO: implement CSRF token
+@login_required
 def toggle():
     host = request.form['host']
     plug = request.form['plug']
