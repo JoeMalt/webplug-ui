@@ -40,7 +40,7 @@ class db_plugSocket(Base):
     def __repr__(self):
         return "<Plug Socket(host_id='%s', plug_id='%s', name='%s', status='%s')>" % (self.host_id, self.plug_id, self.name, self.status)
 
-class schedule_rule(Base):
+class db_scheduleRule(Base):
     __tablename__ = "schedule_rules"
 
     id = Column(Integer, primary_key=True)

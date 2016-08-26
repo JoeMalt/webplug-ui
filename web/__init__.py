@@ -3,7 +3,7 @@ from functools import wraps
 from flask import *
 from passlib.apps import custom_app_context as pwd_context
 
-from core.orm_template import db_user, db_host, db_plugSocket
+from core.orm_template import db_user, db_host, db_plugSocket, db_scheduleRule
 from core import get_db_session, msg_worker
 
 app = Flask(__name__)
@@ -41,10 +41,12 @@ def index():
     db_session = get_db_session()
     try:
         query = db_session.query(db_plugSocket).all()
+        schedule_rules = db_session.query(db_scheduleRule, db_plugSocket).join(db_plugSocket).all()
+        
     finally:
         db_session.close()
 
-    return render_template('index.html', query=query)
+    return render_template('index.html', query=query, schedule_rules=schedule_rules)
 
 
 @app.route("/login", methods=['POST', 'GET'])
