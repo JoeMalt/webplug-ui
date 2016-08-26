@@ -6,7 +6,7 @@ from passlib.apps import custom_app_context as pwd_context
 from core.orm_template import db_user, db_host, db_plugSocket, db_scheduleRule
 from core import get_db_session, msg_worker
 
-from datetime import datetime
+from datetime import datetime, time
 
 app = Flask(__name__)
 
@@ -294,8 +294,8 @@ def add_schedule_rule():
         off_time_str = request.form['off_time']
         
         #convert times to Python Time objects
-        on_time = datetime.strptime(on_time_str, "%H:%M")
-        off_time = datetime.strptime(off_time_str, "%H:%M")
+        on_time = datetime.strptime(on_time_str, "%H:%M").time()
+        off_time = datetime.strptime(off_time_str, "%H:%M").time()
         days=""
         days = days + ("1" if 'run_mon' in request.form.keys() and request.form['run_mon'] == "on" else "0")
         days = days + ("1" if 'run_tue' in request.form.keys() and request.form['run_tue'] == "on" else "0")
@@ -317,8 +317,8 @@ def add_schedule_rule():
         finally:
             db_session.close()
 
-        flash('User added')
-        return redirect(url_for('admin'))
+        flash('Rule added')
+        return redirect(url_for('index'))
 
 
 def verify_credentials(username, password):
