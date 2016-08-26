@@ -1,4 +1,5 @@
 import socket
+import errno
 
 from core.orm_template import db_host, db_plugSocket
 
@@ -41,16 +42,22 @@ def msg_worker(command, host_id, plug_id):
                 query.db_plugSocket.status = 0
 
         db_session.commit()
-        return True
+        return True, ''
     except ConnectionRefusedError:
         print('Connection Refused')
-        return False
+        return False, 'Connection Refused'
     except TimeoutError:
         print('Host is offline.')
-        return False
+        return False, 'Host is offline.'
+    except OSError as error:
+        if error.errno == errno.EHOSTUNREACH:
+            return False, 'Host is unreachable.'
+        elif error.errno == errno.ENETUNREACH:
+            return False, 'Network is unreachable.'
+        else:
+            raise
     finally:
         db_session.close
-
 
 
 def msg_daemon(command):
