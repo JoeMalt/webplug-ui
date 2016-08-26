@@ -36,10 +36,10 @@
 
                     {% if plug_socket.status == 1 %}
                         <img class="status_image" src="{{ url_for('static', filename='img/green_dot.svg') }}"
-                             height="12" width="12"/> On
+                             height="12" width="12"/> <span class='status_txt'>On</span>
                     {% elif plug_socket.status == 0 %}
                         <img class="status_image" src="{{ url_for('static', filename='img/red_dot.svg') }}" height="12"
-                             width="12"/> Off
+                             width="12"/> <span class='status_txt'>Off</span>
                     {% else %}
                         Unknown
                     {% endif %}
@@ -131,9 +131,11 @@
         if (ajaxResponse["status"] == "Success") {
             if (status_storage[table_row] == 0) {
                 $(table_row).find(".status_image").attr("src", "/static/img/green_dot.svg");
+                $(table_row).find(".status_txt").html("On");
             }
             else {
                 $(table_row).find(".status_image").attr("src", "/static/img/red_dot.svg");
+                $(table_row).find(".status_txt").html("Off");
             }
         }
         else if (ajaxResponse["status"] == "Failure") {
