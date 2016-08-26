@@ -265,7 +265,7 @@ def toggle():
 @app.route("/delete_schedule_rule", methods=['POST'])
 @login_required
 @admin_required
-dojnef delete_schedule_rule():
+def delete_schedule_rule():
     schedule_rule_id = request.form['schedule_rule_id']
 
     # Delete the selected user from the database.
@@ -304,7 +304,7 @@ def add_schedule_rule():
         try:
 
             #new_user = db_user(username=username, pwd_hash=pwd_hash, is_admin=is_admin)
-            new_schedule_rule = db_scheduleRule(device_id=device_id, on_time=on_time, off_time=off_time, days=days
+            new_schedule_rule = db_scheduleRule(device_id=device_id, on_time=on_time, off_time=off_time, days=days)
             db_session.add(new_schedule_rule)
             db_session.commit()
         finally:
