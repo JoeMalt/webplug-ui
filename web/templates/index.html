@@ -2,6 +2,8 @@
 <html>
 	<head>
 		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}"/>
+        <script type="text/javascript" src="{{ url_for('static', filename='scripts/jquery.min.js')}}"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='scripts/jquery.form.js')}}"></script>
 		<title>WEBplug</title>
 	</head>
 	<body>
@@ -39,11 +41,21 @@
                         {% endif %}
 
                     </p>
-                    <form method="post" action="/toggle">
+                    <form id="{{plug_socket.id}}" method="post" action="/toggle">
                         <input type="hidden" name="host" value="{{ plug_socket.host_id }}" />
                         <input type="hidden" name="plug" value="{{ plug_socket.plug_id }}" />
                         <input type="submit" value="Toggle"/>
                     </form>
+                        <script>
+                            // wait for the DOM to be loaded
+                            $(document).ready(function() {
+                                alert("Test!");
+                                // bind 'myForm' and provide a simple callback function
+                                $('#{{ plug_socket.id }}').ajaxForm(function() {
+                                    alert("Thank you for your comment!");
+                                });
+                            });
+                        </script>
 			    </td>
             </tr>
             {% endfor %}
