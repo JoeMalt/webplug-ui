@@ -37,7 +37,7 @@ def admin_required(f):
 
 ##CSRF protection
 ##Public Domain, written by Dan Jacob - http://flask.pocoo.org/snippets/3/
-'''
+
 @app.before_request
 def csrf_protect():
     if request.method == "POST":
@@ -58,7 +58,7 @@ def generate_csrf_token():
 
 app.jinja_env.globals['csrf_token'] = generate_csrf_token
 
-'''
+
 ##Main request functions
 @app.route("/")
 @login_required
