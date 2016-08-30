@@ -7,13 +7,13 @@ from core.orm_template import db_user, db_host, db_plugSocket, db_scheduleRule
 from core import get_db_session, msg_worker
 
 from datetime import datetime, time
-import json
+import json, uuid
 app = Flask(__name__)
 
 # Config
 app.config['SECRET_KEY'] = "sdfharwifsfhqht89qthehfq938rutu9e4ufgpWQEUFQEUF498"
 
-
+##Security decorators
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -35,7 +35,31 @@ def admin_required(f):
 
     return decorated_function
 
+##CSRF protection
+##Public Domain, written by Dan Jacob - http://flask.pocoo.org/snippets/3/
+'''
+@app.before_request
+def csrf_protect():
+    if request.method == "POST":
+        token = session.pop('_csrf_token', None)
 
+        try:
+            if not token or token != request.form.get('_csrf_token'):
+                abort(403)
+        except TypeError:
+            abort(403) #A TypeError may occur if a request is repeated
+
+
+def generate_csrf_token():
+    if '_csrf_token' not in session:
+        session['_csrf_token'] = str(uuid.uuid4())
+    return session['_csrf_token']
+
+
+app.jinja_env.globals['csrf_token'] = generate_csrf_token
+
+'''
+##Main request functions
 @app.route("/")
 @login_required
 def index():

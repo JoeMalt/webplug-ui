@@ -20,6 +20,7 @@
         <th>Plug</th>
         <th>Status</th>
     </tr>
+    {% set __csrf_token = "foo" %}
     {% for plug_socket in query %}
         <tr id="plug_row_{{ plug_socket.id }}">
             <td>
@@ -51,6 +52,7 @@
                 <form id="{{ plug_socket.id }}" method="post" action="/toggle">
                     <input type="hidden" name="host" value="{{ plug_socket.host_id }}"/>
                     <input type="hidden" name="plug" value="{{ plug_socket.plug_id }}"/>
+                    <!--<input name=_csrf_token type=hidden value="{{ __csrf_token }}">-->
                     <input type="submit" value="Toggle"/>
                 </form>
                 <script>

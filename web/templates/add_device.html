@@ -27,6 +27,7 @@
                     {% endfor %}
                 </select>
                 </label></td></tr>
+                <input name=_csrf_token type=hidden value="{{ csrf_token() }}">
 				<tr><td><input type="submit" value="Add device" /></td></tr>
 			</form>
 		</table>

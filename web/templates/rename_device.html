@@ -21,6 +21,7 @@
 		<table>
 			<form method="post" action="/rename_device">
 				<tr><td><label>New name: <input type="text" name="name" /></label></td></tr>
+                <input name=_csrf_token type=hidden value="{{ csrf_token() }}">
 				<tr><td><input type="submit" value="Update name" /></td></tr>
 			</form>
 		</table>
