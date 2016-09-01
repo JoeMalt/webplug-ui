@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}"/>
+        {% include 'includes.html' %}
 		<title>WEBplug - Login</title>
 	</head>
 	<body>
+    <div class="container">
 		{% include 'header_bar.html' %}
 		{% with messages = get_flashed_messages() %}
 			{% if messages %}
@@ -16,7 +17,7 @@
 			{% endif %}
 		{% endwith %}
 		
-		<table>
+		<table class="table table-bordered">
 			<form method="post" action="/login">
 				<tr><td><label>Username: <input type="text" name="username" /></label></td></tr>
 				<tr><td><label>Password: <input type="password" name="password" /></label></td></tr>
@@ -25,8 +26,9 @@
 			</form>
 		</table>
 		
-		
+    </div>
 	</body>
+
 </html>
 
 
