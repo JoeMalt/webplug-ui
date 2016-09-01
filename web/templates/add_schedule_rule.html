@@ -40,6 +40,7 @@
                 <tr><td><label>Friday<input type="checkbox" name="run_fri" /></label></td></tr>
                 <tr><td><label>Saturday<input type="checkbox" name="run_sat" /></label></td></tr>
                 <tr><td><label>Sunday<input type="checkbox" name="run_sun" /></label></td></tr>
+                <input name=_csrf_token type=hidden value="{{ csrf_token() }}">
                 <tr><td><input type="submit" value="Add schedule rule" /></td></tr>
 			</form>
 		</table>
