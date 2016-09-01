@@ -40,11 +40,15 @@ def admin_required(f):
 
 # CSRF protection
 # Public Domain, written by Dan Jacob - http://flask.pocoo.org/snippets/3/
-
+# Currently turned off
+'''
 @app.before_request
 def csrf_protect():
     if request.method == "POST":
+        print("POST request being protected")
+        print(session)
         token = session['_csrf_token']
+        
         try:
             if not token or token != request.form.get('_csrf_token'):
                 abort(403)
@@ -52,11 +56,15 @@ def csrf_protect():
             abort(403)  # A TypeError may occur if a request is repeated
     elif request.method == "GET":
         token = session.pop('_csrf_token', None)
-
+'''
 
 def generate_csrf_token():
     if '_csrf_token' not in session:
+        print("Generating CSRF token") ##dbg
         session['_csrf_token'] = str(uuid.uuid4())
+        print("Stored in session") ##dbg
+        print("Token is " + session['_csrf_token']) ##dbg
+        print(session)
     return session['_csrf_token']
 
 
