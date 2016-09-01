@@ -50,13 +50,6 @@ def csrf_protect():
     elif request.method == "GET":
         token = session.pop('_csrf_token', None)
 
-        try:
-            if not token or token != request.form.get('_csrf_token'):
-                abort(403)
-        except TypeError:
-            abort(403) #A TypeError may occur if a request is repeated
-
-
 def generate_csrf_token():
     if '_csrf_token' not in session:
         session['_csrf_token'] = str(uuid.uuid4())
