@@ -41,6 +41,13 @@ def admin_required(f):
 @app.before_request
 def csrf_protect():
     if request.method == "POST":
+        token = session['_csrf_token']
+        try:
+            if not token or token != request.form.get('_csrf_token'):
+                abort(403)
+        except TypeError:
+            abort(403) #A TypeError may occur if a request is repeated
+    elif request.method == "GET":
         token = session.pop('_csrf_token', None)
 
         try:
