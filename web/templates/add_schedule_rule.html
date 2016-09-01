@@ -2,11 +2,13 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}"/>
+        {% include 'includes.html' %}
+		
 		<title>WEBplug</title>
 	</head>
 	<body>
-		
+    <div class="container">
+		{% include 'header_bar.html' %}
 		{% with messages = get_flashed_messages() %}
 			{% if messages %}
 				<ul class=flashes>
@@ -19,9 +21,9 @@
 		
 		<h1>Add schedule rule</h1>
 		<p><a href="{{ url_for('index') }}">Back to homepage</a></p>
-		<table>
+		<table class="table table-bordered">
 			<form method="post" action="/add_schedule_rule">
-				<tr><td><label>Device ID: 
+				<tr><td><label>Device: 
                     <select name="device_id">
                         {% for plug_socket in plug_sockets %}
                             <option value="{{plug_socket.id}}">{{plug_socket.name}}</option>
@@ -33,17 +35,18 @@
                 
                 <tr><td><label>On time: <input type="text" name="on_time" /></label></td></tr>
                 <tr><td><label>Off time: <input type="text" name="off_time" /></label></td></tr>
-                <tr><td><label>Monday<input type="checkbox" name="run_mon" /></label></td></tr>
-                <tr><td><label>Tuesday<input type="checkbox" name="run_tue" /></label></td></tr>
-                <tr><td><label>Wednesday<input type="checkbox" name="run_wed" /></label></td></tr>
-                <tr><td><label>Thursday<input type="checkbox" name="run_thu" /></label></td></tr>
-                <tr><td><label>Friday<input type="checkbox" name="run_fri" /></label></td></tr>
-                <tr><td><label>Saturday<input type="checkbox" name="run_sat" /></label></td></tr>
-                <tr><td><label>Sunday<input type="checkbox" name="run_sun" /></label></td></tr>
+                <tr><td><label>Monday <input type="checkbox" name="run_mon" /></label></td></tr>
+                <tr><td><label>Tuesday <input type="checkbox" name="run_tue" /></label></td></tr>
+                <tr><td><label>Wednesday <input type="checkbox" name="run_wed" /></label></td></tr>
+                <tr><td><label>Thursday <input type="checkbox" name="run_thu" /></label></td></tr>
+                <tr><td><label>Friday <input type="checkbox" name="run_fri" /></label></td></tr>
+                <tr><td><label>Saturday <input type="checkbox" name="run_sat" /></label></td></tr>
+                <tr><td><label>Sunday <input type="checkbox" name="run_sun" /></label></td></tr>
                 <input name=_csrf_token type=hidden value="{{ csrf_token() }}">
                 <tr><td><input type="submit" value="Add schedule rule" /></td></tr>
 			</form>
 		</table>
+    </div>
 	</body>
 </html>
 

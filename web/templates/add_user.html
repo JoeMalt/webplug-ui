@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}"/>
+        {% include 'includes.html' %}
+		
 		<title>WEBplug</title>
 	</head>
 	<body>
+    <div class="container">
 		{% include 'header_bar.html' %}
 		{% with messages = get_flashed_messages() %}
 			{% if messages %}
@@ -18,15 +20,16 @@
 		
 		<h1>Add user</h1>
 		<p><a href="{{ url_for('admin') }}">Back to Users</a></p>
-		<table>
+		<table class="table table-bordered">
 			<form method="post" action="/add_user">
-				<tr><td><label>Username<input type="text" name="username" /></label></td></tr>
-				<tr><td><label>Password<input type="password" name="password" /></label></td></tr>
+				<tr><td><label>Username <input type="text" name="username" /></label></td></tr>
+				<tr><td><label>Password <input type="password" name="password" /></label></td></tr>
                 <tr><td><label>Admin <input type="checkbox" name="is_admin" /></label></td></tr>
                 <input name=_csrf_token type=hidden value="{{ csrf_token() }}">
 				<tr><td><input type="submit" value="Add user" /></td></tr>
 			</form>
 		</table>
+    </div>
 	</body>
 </html>
 
