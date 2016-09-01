@@ -66,8 +66,8 @@ def run_schedule(last_run_time, logger):
             db_scheduleRule.off_time <= current_time,
             db_scheduleRule.off_time >= last_run_time).all()
 
-        logger.warn(jobs_switch_on)
-        logger.warn(jobs_switch_off)
+        logger.warn('Switching on: ' + jobs_switch_on)
+        logger.warn('Switching off: ' + jobs_switch_off)
 
     finally:
         db_session.close()
