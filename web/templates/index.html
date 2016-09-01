@@ -27,7 +27,7 @@
                 <p>{% if plug_socket.name != None %}{{ plug_socket.name }}{% else %} <i>Unnamed device</i> {% endif %}
                 </p>
                 {% if session['is_admin'] %}
-                    <p><a href="/rename_device/{{ plug_socket.id }}">
+                    <p><a href="/rename_device/{{ plug_socket.id }}" class="btn btn-xs btn-default">
                         <small>{% if plug_socket.name != None %}Change name{% else %}Set name{% endif %}</small>
                     </a></p>{% endif %}
             </td>
@@ -53,7 +53,7 @@
                     <input type="hidden" name="host" value="{{ plug_socket.host_id }}"/>
                     <input type="hidden" name="plug" value="{{ plug_socket.plug_id }}"/>
                     <input name=_csrf_token type=hidden value="{{ __csrf_token }}">
-                    <input type="submit" value="Toggle"/>
+                    <input type="submit" value="Toggle" class="btn btn-primary btn-sm"/>
                 </form>
                 <script>
                     $(document).ready(function () {
@@ -79,7 +79,7 @@
 <br/>
 <h1>Your Schedule Rules</h1>
 {% if session['is_admin'] %}
-    <p><a href="{{ url_for('add_schedule_rule') }}">Add new rule</a></p>
+    <p><a href="{{ url_for('add_schedule_rule') }}" class="btn btn-success">Add new rule</a></p>
 {% endif %}
 <table class="table table-striped table-bordered">
     <tr>
@@ -107,7 +107,7 @@
                 <td>
                     <form method="post" action="/delete_schedule_rule">
                         <input type="hidden" name="schedule_rule_id"
-                               value="{{ schedule_rule.db_scheduleRule.id }}"/><input type="submit" value="Delete"/>
+                               value="{{ schedule_rule.db_scheduleRule.id }}"/><input type="submit" class="btn btn-sm btn-danger" value="Delete"/>
                     </form>
                 </td>
             {% endif %}
