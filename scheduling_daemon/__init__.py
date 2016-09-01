@@ -6,9 +6,9 @@ import datetime
 
 from service import find_syslog, Service
 
-
 from core.orm_template import db_scheduleRule, db_plugSocket
 from core import get_db_session, msg_worker
+
 
 class webplug_daemon(Service):
     def __init__(self, *args, **kwargs):
@@ -54,33 +54,28 @@ class webplug_daemon(Service):
 
 def run_schedule(last_run_time, logger):
     current_time = datetime.datetime.now().time()
-
-    # get the time of the last run of this program from the file
-
-    from sqlalchemy import create_engine
-    from sqlalchemy.orm import sessionmaker
-
-    engine = create_engine('sqlite:////home/pi/webplug-ui/web/webplug.db')
-    Session = sessionmaker(bind=engine)
-    db_session = Session()
+    db_session = get_db_session()
 
     try:
-        jobs_switch_on = db_session.query(db_scheduleRule, db_plugSocket).join(db_plugSocket).filter(db_scheduleRule.on_time <= current_time,
-                                                                  db_scheduleRule.on_time >= last_run_time).all()
-        jobs_switch_off = db_session.query(db_scheduleRule, db_plugSocket).join(db_plugSocket).filter(db_scheduleRule.off_time <= current_time,
-                                                                   db_scheduleRule.off_time >= last_run_time).all()
-        jobs_switch_on = db_session.query(db_scheduleRule, db_plugSocket).join(db_plugSocket).all()
-        jobs_switch_off = db_session.query(db_scheduleRule, db_plugSocket).join(db_plugSocket).all()
+        jobs_switch_on = db_session.query(db_scheduleRule.on_time, db_plugSocket.host_id, db_plugSocket.plug_id).join(
+            db_plugSocket).filter(
+            db_scheduleRule.on_time <= current_time,
+            db_scheduleRule.on_time >= last_run_time).all()
+        jobs_switch_off = db_session.query(db_scheduleRule.on_time, db_plugSocket.host_id, db_plugSocket.plug_id).join(
+            db_plugSocket).filter(
+            db_scheduleRule.off_time <= current_time,
+            db_scheduleRule.off_time >= last_run_time).all()
+
         logger.warn(jobs_switch_on)
         logger.warn(jobs_switch_off)
 
     finally:
         db_session.close()
 
-    for job in jobs_switch_off:
-        msg_worker('F', 2, 1)
-        print("Switching off" + job.device_id)
-
     for job in jobs_switch_on:
-        # TODO: make this do something
-        print("Switching on" + job.device_id)
+        msg_worker('N', job.host_id, job.plug_id)
+        print("Switching on plug " + job.plug_id + ' on host ' + job.host_id + '.')
+
+    for job in jobs_switch_off:
+        msg_worker('F', job.host_id, job.plug_id)
+        print("Switching off plug " + job.plug_id + ' on host ' + job.host_id + '.')

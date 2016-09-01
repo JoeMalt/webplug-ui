@@ -8,12 +8,14 @@ from core import get_db_session, msg_worker
 
 from datetime import datetime, time
 import json, uuid
+
 app = Flask(__name__)
 
 # Config
 app.config['SECRET_KEY'] = "sdfharwifsfhqht89qthehfq938rutu9e4ufgpWQEUFQEUF498"
 
-##Security decorators
+
+# Security decorators
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -35,8 +37,9 @@ def admin_required(f):
 
     return decorated_function
 
-##CSRF protection
-##Public Domain, written by Dan Jacob - http://flask.pocoo.org/snippets/3/
+
+# CSRF protection
+# Public Domain, written by Dan Jacob - http://flask.pocoo.org/snippets/3/
 
 @app.before_request
 def csrf_protect():
@@ -46,9 +49,10 @@ def csrf_protect():
             if not token or token != request.form.get('_csrf_token'):
                 abort(403)
         except TypeError:
-            abort(403) #A TypeError may occur if a request is repeated
+            abort(403)  # A TypeError may occur if a request is repeated
     elif request.method == "GET":
         token = session.pop('_csrf_token', None)
+
 
 def generate_csrf_token():
     if '_csrf_token' not in session:
@@ -59,7 +63,7 @@ def generate_csrf_token():
 app.jinja_env.globals['csrf_token'] = generate_csrf_token
 
 
-##Main request functions
+# Main request functions
 @app.route("/")
 @login_required
 def index():
@@ -68,7 +72,7 @@ def index():
     try:
         query = db_session.query(db_plugSocket).all()
         schedule_rules = db_session.query(db_scheduleRule, db_plugSocket).join(db_plugSocket).all()
-        
+
     finally:
         db_session.close()
 
@@ -99,11 +103,11 @@ def login():
             flash("Incorrect username or password")
             return redirect(url_for('login'))
 
+
 @app.route("/admin")
 @login_required
 @admin_required
 def admin():
-
     db_session = get_db_session()
     try:
         users = db_session.query(db_user).all()
@@ -126,7 +130,6 @@ def add_user():
             is_admin = 1
         else:
             is_admin = 0
-            
 
         db_session = get_db_session()
         try:
@@ -177,8 +180,8 @@ def admin_change_password_process():
         return redirect(url_for('admin_change_password'))
 
 
-
-@app.route("/rename_device/<plug_socket_id>", methods=['GET']) #This is the primary key from the plug_sockets table, plug_sockets.id It is *not* the plug_id because this is not a PK
+@app.route("/rename_device/<plug_socket_id>", methods=[
+    'GET'])  # This is the primary key from the plug_sockets table, plug_sockets.id It is *not* the plug_id because this is not a PK
 @login_required
 @admin_required
 def rename_device(plug_socket_id):
@@ -190,7 +193,6 @@ def rename_device(plug_socket_id):
 @login_required
 @admin_required
 def rename_device_process():
-
     plug_socket_id = session['tmp_plug_socket_id_to_change']
     name = request.form['name']
 
@@ -205,9 +207,8 @@ def rename_device_process():
 
     flash("Name updated")
     return redirect(url_for('index'))
-  
-        
-        
+
+
 @app.route("/delete_user", methods=['POST'])
 @login_required
 @admin_required
@@ -246,9 +247,6 @@ def toggle_admin():
 
     flash("Admin status toggled")
     return redirect(url_for('admin'))
-
-
-
 
 
 @app.route("/logout")
@@ -297,7 +295,7 @@ def toggle():
     return json.dumps(response)
 
 
-#SCHEDULING
+# SCHEDULING
 @app.route("/delete_schedule_rule", methods=['POST'])
 @login_required
 @admin_required
@@ -321,25 +319,24 @@ def delete_schedule_rule():
 @admin_required
 def add_schedule_rule():
     if request.method == 'GET':
-        #Get the list of plug_sockets so that we can populate the dropdown
+        # Get the list of plug_sockets so that we can populate the dropdown
         db_session = get_db_session()
         try:
             plug_sockets = db_session.query(db_plugSocket).all()
         finally:
             db_session.close()
-        
-        
-        return render_template('add_schedule_rule.html', plug_sockets=plug_sockets) 
+
+        return render_template('add_schedule_rule.html', plug_sockets=plug_sockets)
     elif request.method == 'POST':
         device_id = request.form['device_id']
-        on_time_str = request.form['on_time'] 
+        on_time_str = request.form['on_time']
         off_time_str = request.form['off_time']
-        
-        #convert times to Python Time objects
+
+        # convert times to Python Time objects
         on_time = datetime.strptime(on_time_str, "%H:%M").time()
         off_time = datetime.strptime(off_time_str, "%H:%M").time()
-        #populate the string mask of days to run
-        days=""
+        # populate the string mask of days to run
+        days = ""
         days = days + ("1" if 'run_mon' in request.form.keys() and request.form['run_mon'] == "on" else "0")
         days = days + ("1" if 'run_tue' in request.form.keys() and request.form['run_tue'] == "on" else "0")
         days = days + ("1" if 'run_wed' in request.form.keys() and request.form['run_wed'] == "on" else "0")
@@ -347,13 +344,11 @@ def add_schedule_rule():
         days = days + ("1" if 'run_fri' in request.form.keys() and request.form['run_fri'] == "on" else "0")
         days = days + ("1" if 'run_sat' in request.form.keys() and request.form['run_sat'] == "on" else "0")
         days = days + ("1" if 'run_sun' in request.form.keys() and request.form['run_sun'] == "on" else "0")
-        
-            
 
         db_session = get_db_session()
         try:
 
-            #new_user = db_user(username=username, pwd_hash=pwd_hash, is_admin=is_admin)
+            # new_user = db_user(username=username, pwd_hash=pwd_hash, is_admin=is_admin)
             new_schedule_rule = db_scheduleRule(device_id=device_id, on_time=on_time, off_time=off_time, days=days)
             db_session.add(new_schedule_rule)
             db_session.commit()
