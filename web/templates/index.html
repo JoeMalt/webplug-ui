@@ -8,8 +8,9 @@
 <body>
 <div class="container">
  {% include 'header_bar.html' %}
+ {% include 'flashes.html' %}
  {% set __csrf_token = csrf_token() %}
-<ul id="notifications"></ul>
+
 
 <h1>Your Devices</h1>
 

@@ -7,15 +7,7 @@
 	<body>
     <div class="container">
 		{% include 'header_bar.html' %}
-		{% with messages = get_flashed_messages() %}
-			{% if messages %}
-				<ul class=flashes>
-					{% for message in messages %}
-						<li>{{ message }}</li>
-					{% endfor %}
-				</ul>
-			{% endif %}
-		{% endwith %}
+		{% include 'flashes.html' %}
 		
 		<table class="table table-bordered">
 			<form method="post" action="/login">

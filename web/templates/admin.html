@@ -9,15 +9,7 @@
     <div class="container">
 		{% include 'header_bar.html' %}
         {% set __csrf_token = csrf_token() %}
-		{% with messages = get_flashed_messages() %}
-			{% if messages %}
-				<ul class=flashes>
-					{% for message in messages %}
-						<li>{{ message }}</li>
-					{% endfor %}
-				</ul>
-			{% endif %}
-		{% endwith %}
+		{% include 'flashes.html' %}
 		
 		<h1>User Management</h1>
 		<p><a href="{{ url_for('add_user') }}"class="btn btn-success">Add new user</a></p>
