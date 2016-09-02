@@ -1,0 +1,9 @@
+# depslib dependency file v1.0
+1472220192 source:/Programming/WebPiWorker/main.c
+	<stdio.h>
+	<sys/socket.h>
+	<sys/mman.h>
+	<netinet/in.h>
+	<string.h>
+	<wiringPi.h>
+
