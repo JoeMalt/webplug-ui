@@ -1,6 +1,8 @@
 # WEBplug
-IoT Plug Socket System
-* Developed for [CyberFirst Advanced](https://www.ncsc.gov.uk/articles/cyberfirst-advanced) 2016 *
+*IoT Plug Socket System*
+
+Developed for [CyberFirst Advanced](https://www.ncsc.gov.uk/articles/cyberfirst-advanced) 2016 
+
 ## What is WEBplug?
 WEBplug is a web-based system to switch devices in your home on and off.
 
